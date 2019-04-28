@@ -31,10 +31,17 @@
 </template>
 
 <script>
+import { constants } from 'crypto';
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  created () {
+    // console.log('>>>>>>>>>>>>', this.$http)
+    // this.$http.get('/api/del?id=2013556').then(res => {
+    //   console.log('>>>>>>>>>res', res)
+    // })
   }
 }
 </script>
