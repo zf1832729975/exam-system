@@ -22,9 +22,10 @@ const routes = [
     { path: '/question/add', component: _import('question/add') },
     {
         path: '/',
-        component: _import('hello-world'),
+        component: _import('main'),
         children: [
-            { path: 'home', component: _import('hello-world') },
+            // { path: 'home', component: _import('main') },
+            { path: 'question', component: _import('question/index') },
             // { path: 'add-test', component: _import('paper/add-test')}
         ]
         // beforeEnter (to, from, next) {

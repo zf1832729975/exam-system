@@ -1,13 +1,13 @@
 <template>
 	<div class="site-wrapper site-page--login">
 		<div class="login-main">
-			<h3 class="login-title">管理员登录</h3>
+			<h2 class="login-title">在线考试系统</h2>
 			<el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" status-icon>
 				<el-form-item prop="id">
 					<el-input v-model="dataForm.id" placeholder="帐号"></el-input>
 				</el-form-item>
-				<el-form-item prop="pwd">
-					<el-input v-model="dataForm.pwd" type="password" placeholder="密码"></el-input>
+				<el-form-item prop="password">
+					<el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
 				</el-form-item>
 				<el-form-item prop="captcha">
 					<el-row :gutter="20">
@@ -21,6 +21,14 @@
 					</el-row>
 				</el-form-item>
 				<el-form-item>
+					<el-radio-group v-model="dataForm.type">
+						<el-radio label="admin">管理员</el-radio>
+						<el-radio label="teacher">教师</el-radio>
+						<el-radio label="student">学生</el-radio>
+					</el-radio-group>
+				</el-form-item>
+
+				<el-form-item>
 					<el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
 				</el-form-item>
 			</el-form>
@@ -29,22 +37,22 @@
 </template>
 
 <script>
-	import { getUUID } from '@/utils'
+	// import { getUUID } from '@/utils'
 	// import md5 from 'md5'
 	export default {
 		data () {
 			return {
 				dataForm: {
 					id: '1000',
-					pwd: 'admin',
-					uuid: '',
-					captcha: ''
+					password: 'admin',
+					captcha: '',
+					type: 'student'
 				},
 				dataRule: {
 					id: [
 						{ required: true, message: '帐号不能为空', trigger: 'blur' }
 					],
-					pwd: [
+					password: [
 						{ required: true, message: '密码不能为空', trigger: 'blur' }
 					],
 					captcha: [
@@ -65,15 +73,14 @@
 						this.$http.get('/api/login', {
 							params: {
 								id: this.dataForm.id,
-								pwd: this.dataForm.pwd,
-								captcha: this.dataForm.captcha
+								password: this.dataForm.password,
+								captcha: this.dataForm.captcha,
+								type: this.dataForm.type
 							}
 						}).then(({data}) => {
-							console.log('data', data)
 							if (data && data.code === 0) {
 								sessionStorage.setItem('token', data.token)
-								console.log('sessionStorage.getItem("token")', sessionStorage.getItem("token"))
-								this.$router.replace({ path: '/home' })
+								this.$router.replace({ path: '/' })
 							} else {
 								this.getCaptcha()
 								this.$message.error(data.msg)
@@ -114,8 +121,7 @@
 <style lang="scss">
 	.site-wrapper.site-page--login {
 		position: absolute;
-		display: flex;
-		align-items: center;
+		padding-top: 100px;
 		top: 0;
 		right: 0;
 		bottom: 0;
@@ -123,30 +129,27 @@
 		background-color: rgba(38, 50, 56, .6);
 		overflow: hidden;
 		&:before {
-			position: fixed;
+			position: absolute;
 			top: 0;
 			left: 0;
 			z-index: -1;
 			width: 100%;
 			height: 100%;
 			content: "";
-			// background-image: url(~@/assets/img/login_bg.jpg);
+			background-image: url(~@/assets/login_bg.jpg);
 			background-size: cover;
 		}
 		.login-main {
-			//  position: absolute;
-			// top: 0;
-			// bottom: 0;
-			// margin: auto;
-			// display: inline-block;
 			margin: 0 auto;
 			padding: 40px;
 			width: 100%;
-			max-width: 414px;
+			max-width: 420px;
 			background-color: #fff;
+			border-radius: 10px;
 		}
 		.login-title {
-			font-size: 16px;
+			text-align: center;
+			color: #409eff;
 		}
 		.login-captcha {
 			overflow: hidden;
@@ -161,4 +164,15 @@
 			margin-top: 38px;
 		}
 	}
+
+	 @media screen and (max-width: 560px) {
+       .site-wrapper.site-page--login {
+           padding-top: 0 !important;
+		   background-color: #fff;
+		   &:before{
+			   background: #fff;
+		   }
+       }
+    }
 </style>
++

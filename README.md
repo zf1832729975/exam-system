@@ -4,12 +4,20 @@
 
 ```shell
 npm install
+
+# new cmd
+cd server
+npm install
 ```
 
 ### Compiles and hot-reloads for development
 
 ```shell
 npm run serve
+
+# new cmd
+cd server
+npm run srve
 ```
 
 ### Compiles and minifies for production

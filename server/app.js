@@ -8,7 +8,7 @@ const jwt = require('./utils/auth')
 const app = express()
 
 
-var session = require('express-session');
+const session = require('express-session');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
@@ -25,7 +25,7 @@ app.all('*',function(req, res, next) {
 	// res.header("Content-Type", "application/jsoncharset=utf-8")
 	/* 报错的原因是前后端的请求头没有对应上，解决方法 */
 	/* 后端不在设置数据类型，意思就是前端你随意发，我什么都接着。 */
-	if (req.path === '/login') { // 请求的是 login 页
+	if (req.path === '/login' || req.path === '/svg') { // 请求的是 login 页
 		next()
 	} else if(jwt.verify(req.headers.token)) { // 验证通过
 		next()

@@ -1,6 +1,6 @@
 <template>
     <div>
-        home 
+        题库管理
     </div>
 </template>
 
