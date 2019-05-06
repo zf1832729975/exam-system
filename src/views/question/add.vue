@@ -121,7 +121,6 @@ export default {
             text.style.maxHeight = '330px'
         },
         createAswEditor (i) {
-            console.log('i', i)
             this.aswOptContent[i] = new E('#asw_opt' + (i + 1) )
             this.aswOptContent[i].create()
         },
@@ -135,8 +134,6 @@ export default {
         },
     
         delAswOpt (index) {
-            console.log('index', index)
-            console.log('this.aswOptContent', this.aswOptContent)
             if (this.aswOptCount <= 2) { // 小于两个的时候不操作
                 this.$message('不能删除啦！')
                 return false;
@@ -158,6 +155,7 @@ export default {
             this.aswOptCount++; 
             setTimeout(() => {
                 this.createAswEditor(this.aswOptCount - 1)
+                this.resetEdtiorStyle(this.aswOptCount)
             }, 100)
         },
         submit () {
@@ -170,7 +168,10 @@ export default {
             this.aswOptContent.map((item, i) => {
                 aswOptContent[i] = item.txt.html()
             })
-            console.log('aswOptContent', aswOptContent)
+            console.log('题干qstStem', qstStem)
+            console.log('答案选项aswOptContent', aswOptContent)
+            console.log('解析analysis', analysis)
+            console.log('答案this.answer', this.answer)
             // this.$http.post('/api/question/add', {
             //     type: this.btnActive,  // 类型
             //     answer: this.answer,

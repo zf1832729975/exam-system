@@ -3,12 +3,14 @@ module.exports = {
 		proxy: {
 			'/api': {
 				target: 'http://127.0.0.1:3000',
+				// target: 'http://148.70.239.67:3000',
 				ws: true,
 				changeOrigin: true,
 				pathRewrite: {
-					'^/api': ''  //通过pathRewrite重写地址，将前缀/api转为/
+					'^/api': '/api/'  //通过pathRewrite重写地址，将前缀/api转为/
 				}
 			}
 		}
-	}
+	},
+	productionSourceMap:false
 }

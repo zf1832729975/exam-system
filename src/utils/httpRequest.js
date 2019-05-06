@@ -8,8 +8,13 @@ import { clearLoginInfo } from '@/utils'
 const http = axios.create({
   timeout: 1000 * 30,
   withCredentials: true,
-//   baseUrl:'127.0.0.3000/api',
-  // baseURL: 'http://127.0.0.1:3000/api/',
+  /**
+   * 在设置跨越的时候，这里的代码 bsesURL这个属性一定不要要，不然跨越就不会成功
+   */
+  // baseURL: 'http://127.0.0.1:3000/',
+  // baseURL: 'http://148.70.239.67:3000', // 这里的配置
+  // baseURL: process.env.VUE_API_URL,
+  baseURL: process.env.VUE_APP_BASEURL,
   headers: {
     'Content-Type': 'application/json; charset=utf-8'
   }
@@ -22,7 +27,6 @@ const http = axios.create({
  * 请求拦截
  */
 http.interceptors.request.use(config => {
-  console.log('config', config)
   // config.headers['token'] = Vue.cookie.get('token') // 请求头带上token
   config.headers['token'] = sessionStorage.getItem('token')
   return config

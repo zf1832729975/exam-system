@@ -5,12 +5,13 @@ const jwt = require('../utils/auth')
 
 router.get('/', (req, res) => {
     let query
-    let {id, password, captcha, type } = req.query
+    let {id, password, captcha, role } = req.query
 
     let sessionCaptcha = req.session.captcha
-    if (type === 'student') {
+    console.log('login --------------->\nreq.session', req.session)
+    if (role === 'student') {
         query = `SELECT * FROM stu_info WHERE id='${id}'`
-    } else if (type === 'teacher'){ 
+    } else if (role === 'teacher'){ 
         query = `SELECT * FROM teacher WHERE id='${id}'`
     } else {
         // 

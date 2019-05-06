@@ -16,12 +16,12 @@
 							</el-input>
 						</el-col>
 						<el-col :span="10" class="login-captcha">
-							<img :src="captchaPath" @click="getCaptcha()" alt="">
+							<div @click="getCaptcha()" v-html="svg"></div>
 						</el-col>
 					</el-row>
 				</el-form-item>
 				<el-form-item>
-					<el-radio-group v-model="dataForm.type">
+					<el-radio-group v-model="dataForm.role">
 						<el-radio label="admin">管理员</el-radio>
 						<el-radio label="teacher">教师</el-radio>
 						<el-radio label="student">学生</el-radio>
@@ -29,7 +29,8 @@
 				</el-form-item>
 
 				<el-form-item>
-					<el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
+					<el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()" 
+					:icon="submiting ? 'el-icon-loading' : ''">登录</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -46,7 +47,7 @@
 					id: '1000',
 					password: 'admin',
 					captcha: '',
-					type: 'student'
+					role: 'student'
 				},
 				dataRule: {
 					id: [
@@ -59,32 +60,41 @@
 						{ required: true, message: '验证码不能为空', trigger: 'blur' }
 					]
 				},
-				captchaPath: ''
+				svg: '',
+				captchaPath: '',
+				submiting: false	// 提交中
 			}
 		},
 		created () {
-			this.getCaptcha()		 
+			this.getCaptcha()	
+			console.log('process.env', process.env)	
 		},
 		methods: {
 			// 提交表单
 			dataFormSubmit () {
 				this.$refs['dataForm'].validate((valid) => {
 					if (valid) {
+						this.submiting = true
 						this.$http.get('/api/login', {
 							params: {
 								id: this.dataForm.id,
 								password: this.dataForm.password,
 								captcha: this.dataForm.captcha,
-								type: this.dataForm.type
+								role: this.dataForm.role
 							}
 						}).then(({data}) => {
+							this.submiting = false
 							if (data && data.code === 0) {
 								sessionStorage.setItem('token', data.token)
+								sessionStorage.setItem('userId', this.dataForm.id)
 								this.$router.replace({ path: '/' })
 							} else {
 								this.getCaptcha()
 								this.$message.error(data.msg)
 							}
+						}).catch( err => {
+							this.$message.error('系统错误，登录失败，请联系管理员')
+							this.submiting = false
 						})
 
 						// this.$http({
@@ -110,9 +120,23 @@
 			},
 			// 获取验证码
 			getCaptcha () {
+				console.log('skdjf')
 				// this.dataForm.uuid = getUUID()
-				// this.captchaPath = this.$http.get('/api/svg?' + Math.random())   
-				this.captchaPath = '/api/svg?' + Math.random()
+				// this.captchaPath = this.$http.get('/api/svg?' + Math.random())
+				console.log('process.env', process.env)
+				// this.captchaPath = 'http://127.0.0.1:3000/api/svg?' + Math.random()	
+				// this.captchaPath =  process.env.VUE_APP_API + '/api/svg?' + Math.random()	
+				// this.captchaPath =  '/api/svg?' + Math.random()	
+				this.svg = ''
+				this.$http('/api/svg').then(res => {
+					console.log('res', res)
+					this.svg = res.data
+				}).catch(err => {
+					this.svg = '<img alt="验证码">'
+				})
+
+				// 在上线环境中确保能运行
+				// this.captchaPath = 'http://148.70.239.67:3000/api/svg?' + Math.random()
 			}
 		}
 	}
@@ -153,10 +177,10 @@
 		}
 		.login-captcha {
 			overflow: hidden;
-			> img {
+			cursor: pointer;
+			> div {
 				width: 100%;
-				height: 36px;
-				cursor: pointer;
+				height: 40px;
 			}
 		}
 		.login-btn-submit {

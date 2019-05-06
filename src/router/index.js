@@ -19,14 +19,15 @@ const routes = [
     { path: '*', redirect: '/404', hidden: true },
     { path: '/login', component: _import('common/login') },
     { path: '/404', component: _import('common/404') },
-    { path: '/question/add', component: _import('question/add') },
+    // { path: '/question/add', component: _import('question/add') },
     {
         path: '/',
         component: _import('main'),
         children: [
             // { path: 'home', component: _import('main') },
             { path: 'question', component: _import('question/index') },
-            // { path: 'add-test', component: _import('paper/add-test')}
+            { path: 'question/add', component: _import('question/add') },
+            { path: 'stu', component: _import('student/index') }
         ]
         // beforeEnter (to, from, next) {
         //     let token = sessionStorage.getItem('token')
@@ -47,6 +48,9 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     let token = sessionStorage.getItem('token')
     if (to.path !== '/404' && to.path !== '/login' && (!token || !/\S/.test(token))) {
+        if(to.path !== '/') {
+            alert('请登录')
+        }
         clearLoginInfo()
         next('/login')
     } else {
