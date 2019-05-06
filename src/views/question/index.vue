@@ -4,19 +4,20 @@
 		<!-- xs、sm、md、lg 和 xl。 -->
 		<el-row :gutter="10">
 			<el-col class="categorys" :sm="6" :md="6" :lg="6">
-				<p class="title">试题分类列表</p>
-				<el-button type="primary" icon="el-icon-plus" @click="newCategory">新建课程分类</el-button>
+				<p class="title">科目列表</p>
+				<el-button type="primary" icon="el-icon-plus" @click="newDialogFormVisible=true">新建课程分类</el-button>
 				<el-input placeholder="搜索分类" v-model="search">
 					<el-button slot="append" icon="el-icon-search"></el-button>
 				</el-input>
 				<el-menu>
 					<el-menu-item
 						v-for="category in filterCategorys"
-						:key="category.id"
+						:key="category.Course_id"
 						@click="categoryClick(category)"
+						contextmenu="showMenu"
 					>
 						<i class="el-icon-folder"></i>
-						<span>{{category.title}}</span>
+						<span>{{category.Course_name}}</span>
 					</el-menu-item>
 				</el-menu>
 			</el-col>
@@ -78,6 +79,13 @@
 				></el-pagination>
 			</el-col>
 		</el-row>
+
+		<!-- 新建课程分类对话框 -->
+		<el-dialog class="dialog" title="新建课程" :visible.sync="newDialogFormVisible">
+			<el-input v-model="newCourseName" autocomplete="off" placeholder="输入课程名称"></el-input>
+			<el-button @click="newDialogFormVisible = false">取 消</el-button>
+			<el-button type="primary" @click="newCategory">确 定</el-button>
+		</el-dialog>
 	</div>
 </template>
 
@@ -85,12 +93,16 @@
 export default {
 	data() {
 		return {
+			
 			search: "",
 			listSearch: "",
 			loading: true, // 加载中
 			pageSize: 12, // 分页每一页的大小
 			currentPage: 1, // 当前页
-			categorys: [{ id: 1, title: "默认分类" }, { id: 2, title: "C语言" }],
+			categorys: [],
+			pecialtyId: '',	// 专业id
+			newCourseName: '', // 新建科目名
+			newDialogFormVisible: false,
 			tableData: [
 				{
 					title: "2+345894*7934893459*3459358",
@@ -130,7 +142,7 @@ export default {
 	computed: {
 		filterCategorys () {
 			return this.categorys.filter(categorys => {
-				return categorys.title.toLowerCase().match(this.search.toLowerCase());
+				return categorys.Course_name.toLowerCase().match(this.search.toLowerCase());
 			});
 		},
 		// 过滤表格的数据并且分页
@@ -149,12 +161,37 @@ export default {
 			}
 		}
 	},
+	created () {
+		this.$http('/api/getcourselist', {
+			params: { 
+				userId: sessionStorage.userId,
+				role: sessionStorage.role
+			}}).then(res => {
+				console.log('res', res)
+				this.categorys = res.data
+				this.pecialtyId = res.data[0].Course_Specialty
+			})
+	},
 	methods: {
 		// 新增分类
 		newCategory () {
 			// console.log('asdk')
 			let userId = sessionStorage.userId
-			console.log('userId', userId)
+			let { newCourseName, pecialtyId } = this
+			if (newCourseName) {
+				this.$http('/api/newcourse', {
+					params: {
+						courseName: newCourseName,
+						pecialtyId,
+					}
+				}).then(res => {
+					if (res.data.code === 0) {
+						this.newDialogFormVisible = false
+					} 
+				})
+			} else {
+				this.$message.error('课程名不能为空')
+			}			
 		},
 		//   分类点击
 		categoryClick(category) {
@@ -174,7 +211,15 @@ export default {
 		},
 		pageChange(currentPage) {
 			this.currentPage = currentPage;
-		}
+		},
+		showMenu (parameter) {
+			parameter.preventDefault()
+			var x = parameter.clientX
+			var y = parameter.clientY
+			console.log('asdkfljal;')
+			this.entityTreeContextMenu.axios = { x, y }
+        }
+
 	}
 };
 </script>
@@ -238,5 +283,11 @@ export default {
 	//   .el-table__body {
 	//     table-layout: auto;
 	//   }
+}
+.dialog .el-dialog__body {
+	text-align: right;
+	.el-input {
+		padding: 10px;
+	}
 }
 </style>

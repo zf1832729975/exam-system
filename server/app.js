@@ -17,23 +17,23 @@ app.set('view engine', 'jade')
 /**
  * 设置跨越访问
  */
-app.all('*',function(req, res, next) {
-	// res.header('Access-Control-Allow-Origin', '*') 
-	res.header("Access-Control-Allow-Headers", "X-Requested-With")
-	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
-	res.header("X-Powered-By", ' 3.2.1')
-	// res.header("Content-Type", "application/jsoncharset=utf-8")
-	/* 报错的原因是前后端的请求头没有对应上，解决方法 */
-	/* 后端不在设置数据类型，意思就是前端你随意发，我什么都接着。 */
-	if (req.path === '/api/login' || req.path === '/api/svg') { // 请求的是 login 页
-		next()
-	} else if(jwt.verify(req.headers.token)) { // 验证通过
-		next()
-	} else {
-		res.status(403)
-		res.render('error')
-	}
-})
+// app.all('*',function(req, res, next) {
+// 	// res.header('Access-Control-Allow-Origin', '*') 
+// 	res.header("Access-Control-Allow-Headers", "X-Requested-With")
+// 	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
+// 	res.header("X-Powered-By", ' 3.2.1')
+// 	// res.header("Content-Type", "application/jsoncharset=utf-8")
+// 	/* 报错的原因是前后端的请求头没有对应上，解决方法 */
+// 	/* 后端不在设置数据类型，意思就是前端你随意发，我什么都接着。 */
+// 	if (req.path === '/api/login' || req.path === '/api/svg') { // 请求的是 login 页
+// 		next()
+// 	} else if(jwt.verify(req.headers.token)) { // 验证通过
+// 		next()
+// 	} else {
+// 		res.status(403)
+// 		res.render('error')
+// 	}
+// })
 
 
 app.use(logger('dev'))
@@ -61,7 +61,8 @@ app.use('/api/users', usersRouter)
 app.use('/api/login', _require('login'))
 app.use('/api/svg', _require('svg'))
 app.use('/api/question/add', _require('question-add'))
-
+app.use('/api/getcourselist', _require('get-course-list'))
+app.use('/api/newcourse', _require('new-course'))
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 	next(createError(404))

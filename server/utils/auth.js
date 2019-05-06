@@ -54,7 +54,7 @@ module.exports = {
         console.log('不正确', error.message)
       } else {
         console.log('验证通过', decoded)
-        result = true
+        result = decoded
       }
     })
     return result

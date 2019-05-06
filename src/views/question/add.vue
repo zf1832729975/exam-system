@@ -1,64 +1,66 @@
 <!-- 新增试题 -->
 <template>
-    <div class="add-test" >
-        <h2 class="title">新增试题</h2>
-        <div class="btn-group">
-            <el-button size="small" v-for="(btn, i) in btnsTitle" :key="btn" :type="i === btnActive ? 'primary' : ''" @click="btnActive = i">{{btn}}</el-button>
-        </div>
-        
-        <h3>试题题干</h3>
-        <div id="qst_stem"></div>
-        <div>
-            <h3>答案选项</h3>
-            <!-- v-show 在这里比 v-if 好  单项和多项 -->
-            <div v-show="btnActive === 0 || btnActive === 1">
-                <div class="asw_opt" v-for="(i) in aswOptCount" :key="i">
-                    <div>({{ answers[i - 1] }}) </div>
-                    <div :id="'asw_opt' + i" class="content"> </div>
+    <div class="add-test-wrap">
+        <div class="add-test" >
+            <h2 class="title">新增试题</h2>
+            <div class="btn-group">
+                <el-button size="small" v-for="(btn, i) in btnsTitle" :key="btn" :type="i === btnActive ? 'primary' : ''" @click="btnActive = i">{{btn}}</el-button>
+            </div>
+            
+            <h3>试题题干</h3>
+            <div id="qst_stem"></div>
+            <div>
+                <h3>答案选项</h3>
+                <!-- v-show 在这里比 v-if 好  单项和多项 -->
+                <div v-show="btnActive === 0 || btnActive === 1">
+                    <div class="asw_opt" v-for="(i) in aswOptCount" :key="i">
+                        <div>({{ answers[i - 1] }}) </div>
+                        <div :id="'asw_opt' + i" class="content"> </div>
+                    </div>
+                    
+                <div class="asw_opt_handle">
+                    <el-button icon="el-icon-delete-solid del" @click="delAswOpt(aswOptCount)">删除最后一项</el-button>
+                        <el-button icon="el-icon-circle-plus-outline" @click="addAswOpt">添加新选项</el-button>
                 </div>
-                
-               <div class="asw_opt_handle">
-                   <el-button icon="el-icon-delete-solid del" @click="delAswOpt(aswOptCount)">删除最后一项</el-button>
-                    <el-button icon="el-icon-circle-plus-outline" @click="addAswOpt">添加新选项</el-button>
-               </div>
+                </div>
+                <!-- 判断题 -->
+                <div v-if="btnActive === 2">
+                    真项 <el-input type="textarea" v-model="aswOptTrueContent"></el-input>
+                    假项 <el-input type="textarea" v-model="aswOptFalseContent"></el-input>
+                </div>
             </div>
-            <!-- 判断题 -->
-            <div v-if="btnActive === 2">
-                真项 <el-input type="textarea" v-model="aswOptTrueContent"></el-input>
-                假项 <el-input type="textarea" v-model="aswOptFalseContent"></el-input>
-            </div>
-        </div>
 
-        <div class="right-asw">
-            正确答案
-            <!-- 单项选择题 -->
-            <div v-if="btnActive === 0" class="opt">
-                <el-radio-group v-model="answer">
-                    <el-radio v-for="i in aswOptCount" :key="i" :label="i-1">{{answers[i - 1]}}</el-radio>
-                </el-radio-group>
+            <div class="right-asw">
+                正确答案
+                <!-- 单项选择题 -->
+                <div v-if="btnActive === 0" class="opt">
+                    <el-radio-group v-model="answer">
+                        <el-radio v-for="i in aswOptCount" :key="i" :label="i-1">{{answers[i - 1]}}</el-radio>
+                    </el-radio-group>
+                </div>
+                <!-- 多项选择题 -->
+                <dir v-else-if="btnActive === 1" class="opt">
+                    <el-checkbox-group v-model="multipleAswList">
+                        <el-checkbox v-for="i in aswOptCount" :key="i" :label="i-1">{{answers[i - 1]}} </el-checkbox>
+                    </el-checkbox-group>
+                </dir>
+                <!-- 判断 -->
+                <div v-else-if="btnActive === 2" class="opt">
+                    <el-radio-group v-model="answer">
+                        <el-radio :label="1">真</el-radio>
+                        <el-radio :label="0">假</el-radio>
+                    </el-radio-group>
+                </div>
             </div>
-            <!-- 多项选择题 -->
-            <dir v-else-if="btnActive === 1" class="opt">
-                <el-checkbox-group v-model="multipleAswList">
-                    <el-checkbox v-for="i in aswOptCount" :key="i" :label="i-1">{{answers[i - 1]}} </el-checkbox>
-                </el-checkbox-group>
-            </dir>
-            <!-- 判断 -->
-             <div v-else-if="btnActive === 2" class="opt">
-                <el-radio-group v-model="answer">
-                    <el-radio :label="1">真</el-radio>
-                    <el-radio :label="0">假</el-radio>
-                </el-radio-group>
+            <div class="analysis">题目解析<div id="analysis"></div></div>
+            <!-- 试题类别 -->
+            <div>试题类别
+                <div></div>
             </div>
-        </div>
-        <div class="analysis">题目解析<div id="analysis"></div></div>
-        <!-- 试题类别 -->
-        <div>试题类别
-            <div></div>
-        </div>
 
-        <div>试题标签</div>
-        <el-button type="primary" @click="submit">保存</el-button>
+            <div>试题标签</div>
+            <el-button type="primary" @click="submit">保存</el-button>
+        </div>
     </div>
 </template>
 
@@ -74,7 +76,7 @@ export default {
             prevHtml: '',
             prevText: '',
             btnActive: 0, // 激活的 button的下标
-            btnsTitle: ['单选', '多选', '判断', '填空', '问答'],
+            btnsTitle: ['单选题', '多选题', '判断题', '填空题', '问答题'],     // 试题类型
             aswOptCount: 4, // 答案选项个数
             answers: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
             answer: 0, // 答案，默认 A | 假
@@ -85,7 +87,7 @@ export default {
 
             aswOptTrueContent: '真',    // 判断题答案选项
             aswOptFalseContent: '假',
-            editorTxtCtnList: []    // 
+            editorTxtCtnList: [],    // 
         }
     },
     created () {
@@ -172,12 +174,18 @@ export default {
             console.log('答案选项aswOptContent', aswOptContent)
             console.log('解析analysis', analysis)
             console.log('答案this.answer', this.answer)
+            this.$message('asdkfa;sdfas;ldf')
+            // let 
+            // let  let { courseId, userId, testType, level, qstStem, answer, opt1,  op2, opt3 = null, opt4 = null } = req.body
             // this.$http.post('/api/question/add', {
-            //     type: this.btnActive,  // 类型
+            //     courseId: '',
+            //     userId: sessionStorage.userId,
+            //     testType: btnsTitle[this.btnActive],  // 类型
             //     answer: this.answer,
             //     qstStem,
             //     analysis,
-            //     aswOptContent
+            //     aswOptContent,
+            //     role: sessionStorage.role
             // }).then(res => {
             //     console.log('>>>>>res', res.data)       
             // })
@@ -189,6 +197,14 @@ export default {
 <style lang="scss" scoped>
     .title {
         padding: 5px 15px;
+    }
+    .add-test-wrap {
+        position: fixed;
+        top: 45px;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        overflow: auto;
     }
     .add-test {
         max-width: 1200px;

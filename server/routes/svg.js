@@ -17,7 +17,6 @@ router.get('/',(req, res)=>{
 	req.session.captcha = cap.text.toLowerCase()// session 存储验证码数值
 	res.type('svg'); // 响应的类型
 	res.send(cap.data)
-	console.log('svg-----------------\nreq.session', req.session)
 })
  
 module.exports = router;

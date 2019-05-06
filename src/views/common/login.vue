@@ -47,7 +47,7 @@
 					id: '1000',
 					password: 'admin',
 					captcha: '',
-					role: 'student'
+					role: 'teacher'
 				},
 				dataRule: {
 					id: [
@@ -66,7 +66,7 @@
 			}
 		},
 		created () {
-			this.getCaptcha()	
+			this.getCaptcha()
 			console.log('process.env', process.env)	
 		},
 		methods: {
@@ -85,8 +85,10 @@
 						}).then(({data}) => {
 							this.submiting = false
 							if (data && data.code === 0) {
+								sessionStorage.setItem('userName',data.userName)
 								sessionStorage.setItem('token', data.token)
 								sessionStorage.setItem('userId', this.dataForm.id)
+								sessionStorage.setItem('role', this.dataForm.role)
 								this.$router.replace({ path: '/' })
 							} else {
 								this.getCaptcha()

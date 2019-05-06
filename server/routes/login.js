@@ -8,7 +8,6 @@ router.get('/', (req, res) => {
     let {id, password, captcha, role } = req.query
 
     let sessionCaptcha = req.session.captcha
-    console.log('login --------------->\nreq.session', req.session)
     if (role === 'student') {
         query = `SELECT * FROM stu_info WHERE id='${id}'`
     } else if (role === 'teacher'){ 
@@ -22,8 +21,8 @@ router.get('/', (req, res) => {
             res.json({code: 401, msg: '没有该用户'})
         } else if (results[0].password === password) {
             if (captcha.toLowerCase() === sessionCaptcha) {
-                let token = jwt.sign({ name: id })
-                res.json({code: 0, token})
+                let token = jwt.sign({ userId: id, role })
+                res.json({code: 0, token, userName: results[0].name })
             } else {
                 res.json({ code: 401, msg: '验证码不正确'})
             }

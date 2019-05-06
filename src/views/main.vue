@@ -51,7 +51,6 @@ Vue.component(CollapseTransition.name, CollapseTransition)
 export default {
 	data () {
 		return {
-			userName: 'admin',
 			menuList: [
 				{title: '考生管理', path: '/stu'},
 				{title: '试卷管理', path: ''},
@@ -63,6 +62,9 @@ export default {
 		}
 	},
 	computed: {
+		userName () {
+			return sessionStorage.userName
+		},
 		mode () {	// horizontal / vertical
 			return this.mobile ? 'vertical' : 'horizontal' 		
 		}
@@ -113,11 +115,11 @@ export default {
 
 <style lang="scss">
 .site-header {
-	position: fixed;
+	// position: fixed;
 	width: 100%;
 	height: 45px;
 	background: #262626;
-	z-index: 99999;
+	// z-index: 99999;
 	.nav {
 		display: flex;
 		justify-content: space-between;
@@ -166,6 +168,7 @@ export default {
 		z-index: 998;
 	}
 }
+
 .site-conten {
 	padding-top: 45px;
 }	
