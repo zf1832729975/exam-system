@@ -1,13 +1,13 @@
 <template>
 	<!-- 题库管理 -->
-	<div>
+	<div class="question">
 		<!-- xs、sm、md、lg 和 xl。 -->
 		<el-row :gutter="10">
 			<el-col class="categorys" :sm="6" :md="6" :lg="6">
 				<p class="title">科目列表</p>
-				<el-button type="primary" icon="el-icon-plus" @click="newDialogFormVisible=true">新建课程分类</el-button>
+				<el-button type="primary" icon="el-icon-plus" @click="newDialogFormVisible=true">新增科目</el-button>
 				<el-input placeholder="搜索分类" v-model="search">
-					<el-button slot="append" icon="el-icon-search"></el-button>
+					<el-button slot="append" icon="el-icon-search" ></el-button>
 				</el-input>
 				<el-menu>
 					<el-menu-item
@@ -36,7 +36,9 @@
 					<!-- 选择框  -->
 					<el-table-column type="selection" width="40"></el-table-column>
 					<el-table-column type="index" column-key="index"></el-table-column>
-					<el-table-column prop="title" label="试题标题" sortable></el-table-column>
+					<el-table-column prop="title" label="试题标题" sortable
+						:show-overflow-tooltip="true" header-align="center" align="center"
+					></el-table-column>
 					<el-table-column
 						prop="difficulty"
 						label="试题难度"
@@ -80,8 +82,8 @@
 			</el-col>
 		</el-row>
 
-		<!-- 新建课程分类对话框 -->
-		<el-dialog class="dialog" title="新建课程" :visible.sync="newDialogFormVisible">
+		<!-- 新增科目分类对话框 -->
+		<el-dialog class="dialog" title="新增科目" :visible.sync="newDialogFormVisible">
 			<el-input v-model="newCourseName" autocomplete="off" placeholder="输入课程名称"></el-input>
 			<el-button @click="newDialogFormVisible = false">取 消</el-button>
 			<el-button type="primary" @click="newCategory">确 定</el-button>
@@ -224,7 +226,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 .title {
 		font-size: 14px;
 		font-weight: bold;
@@ -271,23 +273,25 @@ export default {
 </style>
 
 <style lang="scss">
-.list {
-	.el-button-group {
-		.el-input {
-			> .el-input-group__append,
-			> .el-input__inner {
-				height: 28px;
+.question {
+	.list {
+		.el-button-group {
+			.el-input {
+				> .el-input-group__append,
+				> .el-input__inner {
+					height: 28px;
+				}
 			}
 		}
+		//   .el-table__body {
+		//     table-layout: auto;
+		//   }
 	}
-	//   .el-table__body {
-	//     table-layout: auto;
-	//   }
-}
-.dialog .el-dialog__body {
-	text-align: right;
-	.el-input {
-		padding: 10px;
+	.dialog .el-dialog__body {
+		text-align: right;
+		.el-input {
+			padding: 10px;
+		}
 	}
 }
 </style>

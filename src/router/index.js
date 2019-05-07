@@ -27,7 +27,8 @@ const routes = [
             // { path: 'home', component: _import('main') },
             { path: 'question', component: _import('question/index') },
             { path: 'question/add', component: _import('question/add') },
-            { path: 'stu', component: _import('student/index') }
+            { path: 'stu', component: _import('student/index') },
+            { path: 'paper', component: _import('paper/index') }
         ]
         // beforeEnter (to, from, next) {
         //     let token = sessionStorage.getItem('token')

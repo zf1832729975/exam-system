@@ -53,7 +53,7 @@ export default {
 		return {
 			menuList: [
 				{title: '考生管理', path: '/stu'},
-				{title: '试卷管理', path: ''},
+				{title: '试卷管理', path: '/paper'},
 				{title: '题库管理', path: '/question'},
 				{title: '试题管理', path: ''}
 			],
@@ -65,6 +65,9 @@ export default {
 		userName () {
 			return sessionStorage.userName
 		},
+		role () {
+			return sessionStorage.role
+		},
 		mode () {	// horizontal / vertical
 			return this.mobile ? 'vertical' : 'horizontal' 		
 		}
@@ -72,6 +75,19 @@ export default {
 	mounted () {
 		this.resetDocumentClientHeight()
 		window.onresize = this.resetDocumentClientHeight
+		if (this.role) {
+			this.$notify({
+				title: '欢迎你~ ' + this.userName,
+				dangerouslyUseHTMLString: true,
+				message: '请诚信考试',
+				duration: 0
+			})
+		} else {
+			this.$notify({
+				title: '嗨： ' + this.userName + ' 你好 ~~'
+			})
+		}
+		
 	},
 	methods: {
 		 // 重置窗口可视高度
@@ -170,7 +186,8 @@ export default {
 }
 
 .site-conten {
-	padding-top: 45px;
+	// padding-top: 45px;
+	padding: 10px;
 }	
 @media screen and (max-width: 720px) {
 	.site-header {

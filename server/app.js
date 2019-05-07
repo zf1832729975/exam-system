@@ -63,6 +63,9 @@ app.use('/api/svg', _require('svg'))
 app.use('/api/question/add', _require('question-add'))
 app.use('/api/getcourselist', _require('get-course-list'))
 app.use('/api/newcourse', _require('new-course'))
+app.use('/api/newpaper', _require('new-paper'))
+app.use('/api/getpaperlist', _require('get-paper-list'))
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 	next(createError(404))
