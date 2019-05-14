@@ -98,6 +98,7 @@ export default {
                 return;
             }
 			for (let i = 0; i < len; i ++) {
+                
 				if (this.data[i][1].length > 1) {	//姓名不能小于两个个字
 					if (this.data[i][3].length >= 6) {	// 密码不小于 6 位
 							this.data[i][4] = classId

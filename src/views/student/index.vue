@@ -30,7 +30,7 @@
 						@click="classClick(item)"
 						contextmenu="showMenu"
 					>
-						<i class="el-icon-s-home"></i>
+						  <i class="el-icon-s-home"></i>
 						<span>{{item.name}}</span>
 					</el-menu-item>
 				</el-menu>
@@ -68,121 +68,125 @@
 		</el-row>
 			<el-dialog class="new-student-dialog" title="新增学生" :visible.sync="newStudentDialogVisible">
 				<NewStudent :classList="classList" />
-			</el-dialog>
+			</el-dialog>	
 		
-	</div>
+	</div>		
 </template>
 
 <script>
-import NewStudent from  './new-student.vue'
+import NewStudent from "./new-student.vue";
 export default {
-  	data() {
-    	return {
-			classList: [],
-			studentData: [],
-			studentDataList: {}, 
-			selectClassId: '',
-			checkBoxSelected: false,
-			search: '',
-			newStudentDialogVisible: false,
-			multipleSelection: [],
-			isHandling: false, 	// 在操作中， 增删改查
-  		}
-  	},
-	components: {
-		NewStudent
-	},
-	created() {
-		this.getClassList()
-	},
-  	methods: {
-		// 得到班级列表
-		getClassList() {
-			this.$http("/api/class/get").then(res => {
-						this.selectClassId =  res.data.data[0].id
-						this.newStudentClassId = res.data.data[0].id
-						this.classList = res.data.data
-						this.getClassStudent()
-			})
-		},
-		// 得到一个班级的所有学生
-		getClassStudent() {
-			this.$http("/api/class/getStudentList", { params: { classId: this.selectClassId } }).then(res => {
-				this.studentDataList[this.selectClassId] = res.data
-				this.studentData = res.data
-			}).catch(err => {});
-		},
-		classClick(item) {
-			this.selectClassId =  item.id
-			//   没有值
-			if (!this.studentDataList[this.selectClassId]) {
-				this.getClassStudent()
-			} else {
-				this.studentData = this.studentDataList[this.selectClassId]
-			}
-		},
-		// 批量编辑
-		batchEditor () {
-			console.log('===================', this.$refs.studentTable)
-		},
-		editorStudent () {
-
-		},
-		handleSelectionChange(val) {
-			this.multipleSelection = val;
-			if (val.length < 1) {
-				this.checkBoxSelected = false
-			} else {
-				this.checkBoxSelected = true
-			}
-		},
-		// 批量删除 
-		batchDelStudent () {
-			if (this.isHandling) return;
-			this.isHandling = true
-			let data = []
-			this.multipleSelection.map(item => {
-				data.push(item.id)
-			})
-			this.$http.post('/api/student/del', data).then(({data}) => {
-				this.$message({
-					message: data.msg,
-					type: data.type
-				})
-				this.isHandling = false
-			}).catch(err => {
-				this.isHandling = false
-			})
-		},
-		// 单个删除
-		singleDelStudent (index, row) {
-			if (this.isHandling) return;
-			this.isHandling = true
-			this.$http.post('/api/student/del', [row.id]).then(({data}) => {
-				this.$message({
-					message: data.msg,
-					type: data.type
-				})
-				this.studentDataList[this.selectClassId].splice(index, 1)		
-				this.isHandling = false	
-			})
-		}		
-  	}
+  data() {
+    return {
+      classList: [],
+      studentData: [],
+      studentDataList: {},
+      selectClassId: "",
+      checkBoxSelected: false,
+      search: "",
+      newStudentDialogVisible: false,
+      multipleSelection: [],
+      isHandling: false // 在操作中， 增删改查
+    };
+  },
+  components: {
+    NewStudent
+  },
+  created() {
+    this.getClassList();
+  },
+  methods: {
+    // 得到班级列表
+    getClassList() {
+      this.$http("/api/class/get").then(res => {
+        this.selectClassId = res.data.data[0].id;
+        this.newStudentClassId = res.data.data[0].id;
+        this.classList = res.data.data;
+        this.getClassStudent();
+      });
+    },
+    // 得到一个班级的所有学生
+    getClassStudent() {
+      this.$http("/api/class/getStudentList", {
+        params: { classId: this.selectClassId }
+      })
+        .then(res => {
+          this.studentDataList[this.selectClassId] = res.data;
+          this.studentData = res.data;
+        })
+        .catch(err => {});
+    },
+    classClick(item) {
+      this.selectClassId = item.id;
+      //   没有值
+      if (!this.studentDataList[this.selectClassId]) {
+        this.getClassStudent();
+      } else {
+        this.studentData = this.studentDataList[this.selectClassId];
+      }
+    },
+    // 批量编辑
+    batchEditor() {
+      console.log("===================", this.$refs.studentTable);
+    },
+    editorStudent() {},
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      if (val.length < 1) {
+        this.checkBoxSelected = false;
+      } else {
+        this.checkBoxSelected = true;
+      }
+    },
+    // 批量删除
+    batchDelStudent() {
+      if (this.isHandling) return;
+      this.isHandling = true;
+      let data = [];
+      this.multipleSelection.map(item => {
+        data.push(item.id);
+      });
+      this.$http
+        .post("/api/student/del", data)
+        .then(({ data }) => {
+          this.$message({
+            message: data.msg,
+            type: data.type
+          });
+          this.isHandling = false;
+        })
+        .catch(err => {
+          this.isHandling = false;
+        });
+    },
+    // 单个删除
+    singleDelStudent(index, row) {
+      if (this.isHandling) return;
+      this.isHandling = true;
+      this.$http.post("/api/student/del", [row.id]).then(({ data }) => {
+        this.$message({
+          message: data.msg,
+          type: data.type
+        });
+        this.studentDataList[this.selectClassId].splice(index, 1);
+        this.isHandling = false;
+      });
+    }
+  }
 };
 </script>
 
 <style lang="scss" >
-
 .class {
-	.el-menu {
-		padding-top: 10px;
-		> .el-menu-item {
-			height: 28px;
-			line-height: 28px;
-		}
-	}
+  .el-menu {
+    padding-top: 10px;
+    > .el-menu-item {
+      height: 28px;
+      line-height: 28px;
+    }
+  }
 }
 .new-student-dialog .el-dialog__body {
-	padding: 20px 0;
+  padding: 20px 0;
 }
 </style>
