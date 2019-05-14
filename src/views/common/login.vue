@@ -4,15 +4,15 @@
 			<h2 class="login-title">在线考试系统</h2>
 			<el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" status-icon>
 				<el-form-item prop="id">
-					<el-input v-model="dataForm.id" placeholder="帐号"></el-input>
+					<el-input v-model="dataForm.id" placeholder="帐号" :size="size"></el-input>
 				</el-form-item>
 				<el-form-item prop="password">
-					<el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
+					<el-input v-model="dataForm.password" type="password" placeholder="密码" :size="size"></el-input>
 				</el-form-item>
 				<el-form-item prop="captcha">
 					<el-row :gutter="20">
 						<el-col :span="14">
-							<el-input v-model="dataForm.captcha" placeholder="验证码">
+							<el-input v-model="dataForm.captcha" placeholder="验证码" :size="size">
 							</el-input>
 						</el-col>
 						<el-col :span="10" class="login-captcha">
@@ -30,7 +30,7 @@
 
 				<el-form-item>
 					<el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()" 
-					:icon="submiting ? 'el-icon-loading' : ''">登录</el-button>
+					:icon="submiting ? 'el-icon-loading' : ''" :size="size">登录</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -43,9 +43,10 @@
 	export default {
 		data () {
 			return {
+				size: 'media',
 				dataForm: {
-					id: '1000',
-					password: 'admin',
+					id: '1001',
+					password: '123456',
 					captcha: '',
 					role: 'teacher'
 				},

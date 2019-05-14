@@ -3,23 +3,36 @@
 	<div class="question">
 		<!-- xs、sm、md、lg 和 xl。 -->
 		<el-row :gutter="10">
-			<el-col class="categorys" :sm="6" :md="6" :lg="6">
-				<p class="title">科目列表</p>
-				<el-button type="primary" icon="el-icon-plus" @click="newDialogFormVisible=true">新增科目</el-button>
+			<el-col class="categorys" :sm="6" :md="4" :lg="4">
+				<p class="title">分类列表</p>
+				<el-button type="primary" icon="el-icon-plus" @click="newDialogFormVisible=true">新增分类</el-button>
+				<el-button type="danger" icon="el-icon-delete-solid" plain @click="delCategory" :disabled="$refs.categoryTree && $refs.categoryTree.getCheckedKeys().length<1">删除分类</el-button>
 				<el-input placeholder="搜索分类" v-model="search">
 					<el-button slot="append" icon="el-icon-search" ></el-button>
 				</el-input>
-				<el-menu>
+				<!-- <el-menu>
 					<el-menu-item
-						v-for="category in filterCategorys"
-						:key="category.Course_id"
+						v-for="category in categorys"
+						:key="category.id"
 						@click="categoryClick(category)"
 						contextmenu="showMenu"
 					>
 						<i class="el-icon-folder"></i>
-						<span>{{category.Course_name}}</span>
+						<span>{{category.name}}</span>
 					</el-menu-item>
-				</el-menu>
+				</el-menu> -->
+
+				<el-tree
+					class="filter-tree"
+					:data="categorys"
+					:props="defaultProps"
+					show-checkbox
+					default-expand-all
+					node-key="id"
+					:filter-node-method="filterNode"
+					ref="categoryTree">
+				</el-tree>
+
 			</el-col>
 			<el-col class="list" :sm="16" :md="16" :lg="16">
 				<p class="title">试题列表</p>
@@ -66,8 +79,8 @@
 					<el-table-column prop="score" label="分数" sortable width="50"></el-table-column>
 					<el-table-column label="操作" width="145">
 						<template slot-scope="scope">
-							<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-							<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+							<el-button 	title="编辑" type="primary" plain @click="handleEdit(scope.$index, scope.row)"><i class="el-icon-edit"></i></el-button>
+							<el-button  title="删除" type="danger" plain @click="handleDelete(scope.$index, scope.row)"><i class="el-icon-delete"></i></el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -83,10 +96,13 @@
 		</el-row>
 
 		<!-- 新增科目分类对话框 -->
-		<el-dialog class="dialog" title="新增科目" :visible.sync="newDialogFormVisible">
-			<el-input v-model="newCourseName" autocomplete="off" placeholder="输入课程名称"></el-input>
-			<el-button @click="newDialogFormVisible = false">取 消</el-button>
-			<el-button type="primary" @click="newCategory">确 定</el-button>
+		<el-dialog class="dialog" title="新增分类" :visible.sync="newDialogFormVisible" style="max-width:800px; margin:0 auto;">
+			<el-select v-model="courseId" size="media">
+				<el-option v-for="item in categorys" :key="item.id" :value="item.id" :label="item.name"></el-option>
+			</el-select>
+			<el-input v-model="newCategoryName" autocomplete="off" placeholder="输入分类名称" size="media"></el-input>
+			<el-button @click="newDialogFormVisible = false" size="small">取 消</el-button>
+			<el-button type="primary" @click="newCategory" size="small">确 定</el-button>
 		</el-dialog>
 	</div>
 </template>
@@ -102,8 +118,9 @@ export default {
 			pageSize: 12, // 分页每一页的大小
 			currentPage: 1, // 当前页
 			categorys: [],
-			pecialtyId: '',	// 专业id
-			newCourseName: '', // 新建科目名
+			pecialty: '',	// 专业id
+			courseId: '', // 新建科目名
+			newCategoryName: '', 
 			newDialogFormVisible: false,
 			tableData: [
 				{
@@ -138,15 +155,14 @@ export default {
 					type: "简答题",
 					score: 10
 				}
-			]
+			],
+			defaultProps: {
+				children: 'children',
+				label: 'name'
+			}
 		};
 	},
 	computed: {
-		filterCategorys () {
-			return this.categorys.filter(categorys => {
-				return categorys.Course_name.toLowerCase().match(this.search.toLowerCase());
-			});
-		},
 		// 过滤表格的数据并且分页
 		filterAndPageing () {
 			let filterData = this.tableData.filter(
@@ -164,31 +180,43 @@ export default {
 		}
 	},
 	created () {
-		this.$http('/api/getcourselist', {
-			params: { 
-				userId: sessionStorage.userId,
-				role: sessionStorage.role
-			}}).then(res => {
-				console.log('res', res)
-				this.categorys = res.data
-				this.pecialtyId = res.data[0].Course_Specialty
-			})
+		this.getCategoryList()
+	},
+	watch: {
+		search(val) {
+			this.$refs.categoryTree.filter(val);
+		}
 	},
 	methods: {
+		getCategoryList () {
+			this.$http('/api/getcourselist').then(res => {
+					console.log('res.data', res.data)
+					this.categorys = res.data
+					this.courseId = res.data[0].id
+					this.pecialty = res.data[0].pecialty
+				})	
+		},
+		filterNode(value, data) {
+			if (!value) return true;
+			return data.name.toLowerCase().includes(value.toLowerCase());
+		},
 		// 新增分类
 		newCategory () {
 			// console.log('asdk')
-			let userId = sessionStorage.userId
-			let { newCourseName, pecialtyId } = this
-			if (newCourseName) {
+			let { courseId, pecialty,  newCategoryName} = this
+			if (courseId) {
 				this.$http('/api/newcourse', {
 					params: {
-						courseName: newCourseName,
-						pecialtyId,
+						courseId,
+						pecialty,
+						newCategoryName
 					}
 				}).then(res => {
 					if (res.data.code === 0) {
 						this.newDialogFormVisible = false
+						// this.categorys.push(res.data.data)
+						this.getCategoryList()
+						this.$message(res.data.msg)
 					} 
 				})
 			} else {
@@ -220,8 +248,39 @@ export default {
 			var y = parameter.clientY
 			console.log('asdkfljal;')
 			this.entityTreeContextMenu.axios = { x, y }
-        }
-
+		},
+		// 删除分类  
+		delCategory () {
+			if (this.$refs.categoryTree.getCheckedKeys().length < 1){
+				this.$message('请选择分类'); return false;
+			}
+			this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				// console.log('this.$refs.categoryTree.getCheckedKeys()', this.$refs.categoryTree.getCheckedKeys())
+				console.log('this.$refs.categoryTree', this.$refs.categoryTree.getCheckedNodes())
+				let arr = this.$refs.categoryTree.getCheckedNodes()
+				let data = []
+				arr.map(item => {
+					// 没有孩子
+					if (!item.children) {
+						console.log('item', item)
+						data.push(item.id + '');
+					}
+				})
+				console.log('data', data)
+				this.$http('/api/category/del', {
+					params: {
+						data: data
+					}
+				}).then(res => {
+					this.getCategoryList()
+					this.$message(res.data.msg)
+				});
+			})
+		}
 	}
 };
 </script>
@@ -234,9 +293,9 @@ export default {
 }
 .categorys {
 	.el-button {
-		padding: 6px 15px;
-		width: 100%;
-		border-radius: 0%;
+		// padding: 6px 15px;
+		// width: 100%;
+		// border-radius: 0%;
 		margin: 5px 0;
 	}
 	.el-input {
@@ -283,9 +342,6 @@ export default {
 				}
 			}
 		}
-		//   .el-table__body {
-		//     table-layout: auto;
-		//   }
 	}
 	.dialog .el-dialog__body {
 		text-align: right;

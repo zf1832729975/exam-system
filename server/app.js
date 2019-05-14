@@ -26,6 +26,7 @@ app.use(session({
 	resave: false,	// 是指每次请求都重新设置session cookie
 	saveUninitialized: true, // 无论有没有session cookie，每次请求都设置个session cookie ，默认给个标示为 connect.sid
 }))
+// app.use(express.bodyParser({ uploadDir: "./public/upload" }));
 
 
 /**
@@ -50,26 +51,38 @@ app.use(session({
 // 	}
 // })
 
-// app.use("*", function (req, res, next) {
-// 	//设置允许跨域的域名，*代表允许任意域名跨域
-// 	res.header("Access-Control-Allow-Origin", "*");
-// 	//允许的header类型
-// 	res.header("Access-Control-Allow-Headers", "content-type");
-// 	//跨域允许的请求方式 
-// 	res.header("Access-Control-Allow-Methods", "DELETE,PUT,POST,GET,OPTIONS");
-// 	if (req.method.toLowerCase() == 'options') {
 
-// 		res.send(200);  //让options尝试请求快速结束
-// 	}
-// 	else {
+/* corse跨越设置
+-------------------------------------------------- */
+// app.use(cors({credentials: true, origin: 'http://www.7749tian.com'})); 
+app.use(cors({
+	credentials: true,
+	origin: ['http://localhost:8001', 'http://192.168.199.187:8001', 'http://www.7749tian.com']
+}));
 
-// 		next();
-// 	}
-// });
+app.all('*', function (req, res, next) {
+	console.log('req.path', req.path)
+	// res.header('Access-Control-Allow-Origin', '*') 
+	res.header('role', 'teacher')
+	res.header("Access-Control-Allow-Headers", "X-Requested-With")
+	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
+	res.header("X-Powered-By", ' 3.2.1')
+	// res.header("Content-Type", "application/jsoncharset=utf-8")
+	/* 报错的原因是前后端的请求头没有对应上，解决方法 */
+	/* 后端不在设置数据类型，意思就是前端你随意发，我什么都接着。 */
+	if (req.path === '/api/login' || req.path === '/api/svg' || req.path === '/api/uploadImage' || req.path.includes('upload')) { // 请求的是 login 页
+		next()
+	} else {
+		let result = jwt.verify(req.headers.token)
+		if (result) { // 验证通过
+			req.query.user = result
+			next()
+		} else {
+			res.json({ code: 401, msg: 'Not carrying token' })
+		}
+	}
+})
 
-
-
-app.use(cors({credentials: true, origin: 'http://localhost:8001'}));
 /* 	router use 能处理get和post,
 --------------------------------------------------*/
 const _require = file => require('./routes/' + file)
@@ -86,9 +99,13 @@ app.use('/api/getcourselist', _require('get-course-list'))
 app.use('/api/newcourse', _require('new-course'))
 app.use('/api/newpaper', _require('new-paper'))
 app.use('/api/getpaperlist', _require('get-paper-list'))
-
 app.use('/api/question', _require('question'))
-
+app.use('/api/userInfo', _require('user-info'))
+app.use('/api/class', _require('class'))
+app.use('/api/category', _require('category'))
+app.use('/api/uploadImage', _require('uploadImage'))
+app.use('/api/student', _require('student'))
+app.use('/api/teacher', _require('teacher'))
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
 	next(createError(404))

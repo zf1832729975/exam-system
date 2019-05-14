@@ -28,7 +28,9 @@ const routes = [
             { path: 'question', component: _import('question/index') },
             { path: 'question/add', component: _import('question/add') },
             { path: 'stu', component: _import('student/index') },
-            { path: 'paper', component: _import('paper/index') }
+            { path: 'paper', component: _import('paper/index') },
+            { path: 'setting', component: _import('common/setting')},
+            { path: 'teacher', component: _import('teacher/index')}
         ]
         // beforeEnter (to, from, next) {
         //     let token = sessionStorage.getItem('token')
@@ -43,7 +45,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    mode: 'hash',
+    // mode: 'hash',
+    mode: 'history',
     routes
 })
 router.beforeEach((to, from, next) => {

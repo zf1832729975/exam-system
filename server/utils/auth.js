@@ -40,7 +40,7 @@ module.exports = {
    * @param {*} secret 秘钥
    */
   sign (payload, secret = mySecret) {
-    return jwt.sign(payload, secret, { expiresIn: '1h' })
+    return jwt.sign(payload, secret, { expiresIn: '6h' })
   },
   /**
    * token: 要验证的token

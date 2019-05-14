@@ -3,7 +3,7 @@
 module.exports = {
     host: 'localhost',
     port: 3306,
-    database: 'exam-system',
+    database: 'exam_system',
     user: 'root',
     password: 'zhou_fei'
 };

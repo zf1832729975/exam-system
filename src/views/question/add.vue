@@ -54,15 +54,20 @@
             <div class="analysis">题目解析<div id="analysis"></div></div>
             <!-- 试题类别 -->
             <div class="box">
-                <div>科目列表</div>
-                <el-select v-model="courseId" placeholder="请选择">
+                <div>分类</div>
+                <!-- <el-select v-model="courseId" placeholder="请选择">
                     <el-option
                     v-for="item in courseList"
                     :key="item.Course_id"
                     :label="item.Course_name"
                     :value="item.Course_id">
                     </el-option>
-                </el-select>
+                </el-select> -->
+                <el-cascader
+                    :options="courseList"
+                    v-model="selectedCourse"
+                    :props="{'label': 'name', 'value': 'id'}"
+                ></el-cascader>
                 <el-button @click="getCourseList">重新加载</el-button>
             </div>
 
@@ -104,7 +109,8 @@ export default {
             level: '一般',   // 使用难易度
             levelList: ['简单', '一般', '困难'],
             courseList: [],  // 课程列表
-            courseId: ''    // 课程 id
+            // courseId: ''    // 课程 id
+            selectedCourse: '',  // 选中的课程
         }
     },
     created () {
@@ -112,15 +118,17 @@ export default {
     },
     mounted () {
         this.qstStemContent = new E('#qst_stem')
+        //   // 关闭粘贴样式的过滤
+        // this.qstStemContent.customConfig.pasteFilterStyle = true
+        //  // 忽略粘贴内容中的图片
+        // this.qstStemContent.customConfig.pasteIgnoreImg = false
+        // editor.customConfig.uploadImgServer = '/upload'  // 上传图片到服务器
+
+         this.qstStemContent.customConfig.uploadImgServer = '/api/uploadImage'
+
         this.qstStemContent.create()
         this.analysisContent = new E('#analysis')
         this.analysisContent.create()
-        this.qstStemContent.customConfig.menus = [
-            'head',
-            'bold',
-            'italic',
-            'underline'
-        ]
         for(let i = 0; i < this.aswOptCount; i ++) {
             this.createAswEditor(i)
         }
@@ -134,14 +142,19 @@ export default {
     
     methods: {
         getCourseList () {
-            this.$http('/api/getcourselist', {
-			params: { 
-				userId: sessionStorage.userId,
-				role: sessionStorage.role
-			}}).then(res => {
+            this.$http('/api/getcourselist').then(res => {
 				console.log('res', res)
-				this.courseList = res.data
-				this.courseId = res.data[0].Course_id
+                this.courseList = res.data
+                this.selectedCourse = ''
+                for (let i = 0; i < res.data.length; i++) {
+                     if (res.data[i].children.length == 0) {
+                         res.data[i].children.push({
+                            name: '默认',
+                            id: -1
+                         })
+                     }
+                }
+				// this.courseId = res.data[0].Course_id
 			}).catch(err => {
                 this.$message('加载科目列表出错')
             })
@@ -197,6 +210,10 @@ export default {
                 this.$message.error('题干不能为空！') 
                 return false
             } 
+            if (!this.selectedCourse) {
+                this.$message.error('请选择分类') 
+                return false
+            }
             // 答案选项
             let aswOptContent = []
             for (let i = 0; i < this.aswOptCount; i ++) {
@@ -218,18 +235,23 @@ export default {
             console.log('答案选项aswOptContent', aswOptContent)
             console.log('解析analysis', analysis)
             console.log('答案this.answer', this.answer)
-            console.log('this.courseId', this.courseId)
+            console.log('selectedCourse', this.selectedCourse)
+            // console.log('this.courseId', this.courseId)
+            
+
             // let  let { courseId, userId, testType, level, qstStem, answer, opt1,  op2, opt3 = null, opt4 = null } = req.body
             this.$http.post('/api/question/add', {
-                courseId: this.courseId,
-                userId: sessionStorage.userId,
+                // courseId: this.courseId,
+                courseId: this.selectedCourse[0],
+                categoryId: this.selectedCourse[1],
+                // userId: sessionStorage.userId,
                 testType: this.btnsTitle[this.btnActive],  // 类型
                 level: this.level,
                 answer: this.answer,
                 qstStem,
                 analysis,
                 aswOptContent,
-                role: sessionStorage.role
+                // role: sessionStorage.role
             }).then(res => {
                 if (res.data.code === 0 ) {
                     console.log('res.data', res.data)

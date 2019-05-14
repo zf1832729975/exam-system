@@ -14,7 +14,7 @@
 						<el-menu-item index="8" @click="navClick">试题管理</el-menu-item> -->
 					</el-menu>
 					<el-menu class="navbar-menu-right" :mode="mode">
-						<el-menu-item index="1">
+						<el-menu-item index="1" @click="$router.push({ path: '/setting' })">
 							<i class="el-icon-setting"></i>
 							<span slot="title">设置</span>
 						</el-menu-item>
@@ -55,7 +55,7 @@ export default {
 				{title: '考生管理', path: '/stu'},
 				{title: '试卷管理', path: '/paper'},
 				{title: '题库管理', path: '/question'},
-				{title: '试题管理', path: ''}
+				{title: '教师管理', path: '/teacher'}
 			],
 			navBtnActive: false,
 			mobile: false	// 手机设备
@@ -75,7 +75,7 @@ export default {
 	mounted () {
 		this.resetDocumentClientHeight()
 		window.onresize = this.resetDocumentClientHeight
-		if (this.role) {
+		if (this.role === 'student') {
 			this.$notify({
 				title: '欢迎你~ ' + this.userName,
 				dangerouslyUseHTMLString: true,
@@ -84,7 +84,7 @@ export default {
 			})
 		} else {
 			this.$notify({
-				title: '嗨： ' + this.userName + ' 你好 ~~'
+				title: '嗨： ' + this.userName + (this.role === 'teacher'  ? '老师 ' :  '管理员')  +  ' 你好 ~~'
 			})
 		}
 		
@@ -109,12 +109,7 @@ export default {
 					message: '退出成功，请重新登录!',
 					center: this.mobile					
 				});
-			}).catch(() => {
-			this.$message({
-				type: 'info',
-				message: '已取消删除',
-			});          
-			});
+			})
 		},
 
 		// 导航栏菜单点击
