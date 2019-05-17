@@ -20,15 +20,17 @@ export default {
   box-sizing: border-box;
 }
 
-#app {
+body{
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  -webkit-text-size-adjust:100%;
+  color: #333;
+  font-size: 14px;
+  background: #fff;
 }
 
-body,ol,ul,h1,h2,h3,h4,h5,h6,p,th,td,dl,dd,form,fieldset,legend,input,textarea,select{margin:0;padding:0}
-body{background:#fff;-webkit-text-size-adjust:100%;}
+body,ol,ul,h1,h2,h3,h4,h5,h6,p,th,td,form,fieldset,legend,input,textarea,select{margin:0;padding:0}
 a{color:#2d374b;text-decoration:none}
 a:hover{color:#cd0200;text-decoration:underline}
 em{font-style:normal}

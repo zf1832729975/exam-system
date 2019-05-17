@@ -29,8 +29,9 @@ const routes = [
             { path: 'question/add', component: _import('question/add') },
             { path: 'stu', component: _import('student/index') },
             { path: 'paper', component: _import('paper/index') },
-            { path: 'setting', component: _import('common/setting')},
-            { path: 'teacher', component: _import('teacher/index')}
+            { path: 'setting', component: _import('common/setting') },
+            { path: 'teacher', component: _import('teacher/index') },
+            { path: 'exam/exam', component: _import('exam/exam')}
         ]
         // beforeEnter (to, from, next) {
         //     let token = sessionStorage.getItem('token')
@@ -52,7 +53,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     let token = sessionStorage.getItem('token')
     if (to.path !== '/404' && to.path !== '/login' && (!token || !/\S/.test(token))) {
-        if(to.path !== '/') {
+        if (to.path !== '/') {
             alert('请登录')
         }
         clearLoginInfo()

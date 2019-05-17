@@ -182,7 +182,7 @@ export default {
 
 .site-conten {
 	// padding-top: 45px;
-	padding: 10px;
+	// padding: 10px;
 }	
 @media screen and (max-width: 720px) {
 	.site-header {

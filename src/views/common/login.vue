@@ -45,7 +45,7 @@
 			return {
 				size: 'media',
 				dataForm: {
-					id: '1001',
+					id: '1002',
 					password: '123456',
 					captcha: '',
 					role: 'teacher'
@@ -123,7 +123,6 @@
 			},
 			// 获取验证码
 			getCaptcha () {
-				console.log('skdjf')
 				// this.dataForm.uuid = getUUID()
 				// this.captchaPath = this.$http.get('/api/svg?' + Math.random())
 				console.log('process.env', process.env)

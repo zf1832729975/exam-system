@@ -47,7 +47,7 @@ export default {
 	},
 	created () {
 		// this.getCourseList()
-		this.getPaperList()
+		// this.getPaperList()
 	},
 	methods: {
 		// 得到课程列表

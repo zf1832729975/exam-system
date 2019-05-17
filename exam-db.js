@@ -1,4 +1,4 @@
-// 考试内容
+// 试卷内容
 let paperContent = {
     fixed: {
         single: ["单选题id1", "单选题id2"],
@@ -30,4 +30,15 @@ let paperContent = {
         }
     }
 
+}
+
+// 考试记录内容
+
+let examRecordContent = {
+    single: [
+        ["试题id", "学生答案"]
+    ],
+    more: [
+        ["试题id", "学生答案"]
+    ]
 }

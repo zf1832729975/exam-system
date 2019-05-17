@@ -13,11 +13,12 @@
 					<el-input v-model="search" placeholder="学号或姓名"></el-input>
 				</el-form-item>
 				<el-form-item>
-						<el-button>查询</el-button>
-						<el-button type="primary" @click="newStudentDialogVisible = true">新增</el-button>
-						<el-button type="danger" :disabled="!checkBoxSelected" @click="batchDelStudent">批量删除</el-button>
-						<el-button type="info" @click="batchEditor">批量编辑</el-button>
-						<el-button type="info" @click="getClassStudent">刷新</el-button>
+						<el-button icon="el-icon-search">查询</el-button>
+						<el-button type="primary" @click="newStudentDialogVisible = true" icon="el-icon-plus">新增</el-button>
+						<el-button type="danger" :disabled="!checkBoxSelected" @click="batchDelStudent" icon="el-icon-delete
+">批量删除</el-button>
+						<el-button type="info" @click="batchEditor" icon="el-icon-edit">批量编辑</el-button>
+						<el-button type="info" @click="getClassStudent" icon="el-icon-refresh">刷新</el-button>
 				</el-form-item>
 		</el-form>
 		<el-row :gutter="10" class="class">
