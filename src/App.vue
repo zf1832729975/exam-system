@@ -38,4 +38,24 @@ li{list-style:none}
 img{border:0;vertical-align:middle}
 table{border-collapse:collapse;border-spacing:0}
 p{word-wrap:break-word}
+.pull-left {
+	float: left;
+}
+/*清除浮动*/
+.clearfix::before,
+.clearfix::after {
+	content: "";
+	display: block;
+	height: 0;
+	line-height: 0;
+	visibility: hidden;
+	clear: both;
+}
+
+.pull-right {
+	float: right;
+}
+.inline > div {
+    display: inline-block;
+}
 </style>

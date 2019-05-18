@@ -14,7 +14,8 @@ router.get('/',(req, res)=>{
 		// 翻转颜色
 		inverse: false,		
 	});
-	req.session.captcha = cap.text.toLowerCase()// session 存储验证码数值
+    req.session.captcha = cap.text.toLowerCase()    // session 存储验证码数值
+    console.log('服务端生成的验证码', req.session.captcha)
 	res.type('svg'); // 响应的类型
 	res.send(cap.data)
 })

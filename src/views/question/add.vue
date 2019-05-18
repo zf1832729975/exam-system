@@ -36,28 +36,36 @@
 				</div>
 			</div>
 
-			<div class="right-asw">
-				正确答案
-				<!-- 单项选择题 -->
-				<div v-if="btnActive === 0" class="opt">
-					<el-radio-group v-model="answer">
-						<el-radio v-for="i in aswOptCount" :key="i" :label="i">{{answers[i - 1]}}</el-radio>
-					</el-radio-group>
+			<div class="right-asw clearfix">
+				<div class="pull-left inline">
+                    正确答案
+					<!-- 单项选择题 -->
+					<div v-if="btnActive === 0" class="opt">
+						<el-radio-group v-model="answer">
+							<el-radio v-for="i in aswOptCount" :key="i" :label="i">{{answers[i - 1]}}</el-radio>
+						</el-radio-group>
+					</div>
+					<!-- 多项选择题 -->
+					<dir v-else-if="btnActive === 1" class="opt">
+						<el-checkbox-group v-model="multipleAswList">
+							<el-checkbox v-for="i in aswOptCount" :key="i" :label="i">{{answers[i - 1]}}</el-checkbox>
+						</el-checkbox-group>
+					</dir>
+					<!-- 判断 -->
+					<div v-else-if="btnActive === 2" class="opt">
+						<el-radio-group v-model="answer">
+							<el-radio :label="1">真</el-radio>
+							<el-radio :label="0">假</el-radio>
+						</el-radio-group>
+					</div>
 				</div>
-				<!-- 多项选择题 -->
-				<dir v-else-if="btnActive === 1" class="opt">
-					<el-checkbox-group v-model="multipleAswList">
-						<el-checkbox v-for="i in aswOptCount" :key="i" :label="i">{{answers[i - 1]}}</el-checkbox>
-					</el-checkbox-group>
-				</dir>
-				<!-- 判断 -->
-				<div v-else-if="btnActive === 2" class="opt">
-					<el-radio-group v-model="answer">
-						<el-radio :label="1">真</el-radio>
-						<el-radio :label="0">假</el-radio>
-					</el-radio-group>
+				<div class="score pull-left">
+					分数&nbsp;&nbsp;
+                    <!-- 不是设计题 -->
+					<el-input-number  :min="1" :max=" btnActive !== 4 ? 5 : 30"  v-model="score"></el-input-number>
 				</div>
 			</div>
+
 			<div class="analysis">
 				题目解析
 				<div id="analysis"></div>
@@ -121,7 +129,8 @@ export default {
 			courseList: [{ name: "占位", id: 1 }], // 课程列表
 			// courseId: ''    // 课程 id
 			selectdeCategory: [], // 选中的课程
-			props: {}
+			props: {},
+			score: 1
 		};
 	},
 	created() {
@@ -268,7 +277,8 @@ export default {
 				answer: this.answer,
 				categoryId: this.selectdeCategory[1],
 				difficult: this.difficult + 1,
-				analysis
+                analysis,
+                score: this.score
 			};
 
 			for (let i = 0; i < this.aswOptCount; i++) {

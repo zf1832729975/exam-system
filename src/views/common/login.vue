@@ -16,7 +16,9 @@
 							</el-input>
 						</el-col>
 						<el-col :span="10" class="login-captcha">
-							<div @click="getCaptcha()" v-html="svg"></div>
+							<!-- <div class="svg" @click="getCaptcha()" v-html="svg"></div> -->
+							<img class="svg" :src="captchaPath" @click="getCaptcha()" v-html="svg"></img>
+
 						</el-col>
 					</el-row>
 				</el-form-item>
@@ -127,15 +129,15 @@
 				// this.captchaPath = this.$http.get('/api/svg?' + Math.random())
 				console.log('process.env', process.env)
 				// this.captchaPath = 'http://127.0.0.1:3000/api/svg?' + Math.random()	
-				// this.captchaPath =  process.env.VUE_APP_API + '/api/svg?' + Math.random()	
+				this.captchaPath =  process.env.VUE_APP_API + '/api/svg?' + Math.random()	
 				// this.captchaPath =  '/api/svg?' + Math.random()	
-				this.svg = ''
-				this.$http('/api/svg').then(res => {
-					console.log('res', res)
-					this.svg = res.data
-				}).catch(err => {
-					this.svg = '<img alt="验证码">'
-				})
+				// this.svg = ''
+				// this.$http('/api/svg').then(res => {
+				// 	console.log('res', res)
+				// 	this.svg = res.data
+				// }).catch(err => {
+				// 	this.svg = '<img alt="验证码">'
+				// })
 
 				// 在上线环境中确保能运行
 				// this.captchaPath = 'http://148.70.239.67:3000/api/svg?' + Math.random()
@@ -180,7 +182,7 @@
 		.login-captcha {
 			overflow: hidden;
 			cursor: pointer;
-			> div {
+			> .svg {
 				width: 100%;
 				height: 40px;
 			}

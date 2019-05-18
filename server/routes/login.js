@@ -5,8 +5,10 @@ const jwt = require('../utils/auth')
 
 router.get('/', (req, res) => {
     let { id, password, captcha, role } = req.query
+    console.log('客户端发送的验证码', captcha)
     if (id && password && captcha && role) {
         let sessionCaptcha = req.session.captcha
+        console.log('服务端保持的验证码', sessionCaptcha)
         db.query(`SELECT * FROM ${role} WHERE id=?`, id, (results, fields) => {
             
             if (!results[0]) {

@@ -19,5 +19,20 @@ router.get('/del', (req, res) => {
     }
 })
 
+// 得到分类 根据 课程到得分类
+router.get('/get', (req, res) => {
+    // let { user, courseId } = req.query
+    delete req.query.user 
+    console.log('req.query', req.query)
+    db.query('SELECT * FROM category WHERE ? ', req.query , data => {
+        console.log('data', data)
+        res.json({
+            code: 0,
+            type: 'success',
+            data
+        })
+    })
+})
+
 
 module.exports = router

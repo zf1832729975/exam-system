@@ -98,7 +98,7 @@ app.use('/api/svg', _require('svg'))
 // app.use('/api/question/add', _require('question-add'))
 app.use('/api/getcourselist', _require('get-course-list'))
 app.use('/api/newcourse', _require('new-course'))
-app.use('/api/newpaper', _require('new-paper'))
+app.use('/api/paper', _require('paper'))
 app.use('/api/getpaperlist', _require('get-paper-list'))
 app.use('/api/question', _require('question'))
 app.use('/api/userInfo', _require('user-info'))
@@ -108,7 +108,7 @@ app.use('/api/uploadImage', _require('uploadImage'))
 app.use('/api/student', _require('student'))
 app.use('/api/teacher', _require('teacher'))
 app.use('/api/exam', _require('exam'))
-
+app.use('/api/getTest', _require('getTest'))
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404))

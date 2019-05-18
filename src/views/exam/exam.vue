@@ -1,5 +1,5 @@
 <template>
-	<div class="exam">
+	<div class="exam" :style="{background: backgroundColor, color: fontColor}">
 		<div class="exam-inner">
 			<h3>C语言考题</h3>
 			<div class="single">
@@ -54,6 +54,8 @@
 					>{{i}}</a>
 				</div>
 			</div>
+			背景颜色 <el-color-picker v-model="backgroundColor" show-alpha></el-color-picker>
+			字体颜色 <el-color-picker v-model="fontColor" show-alpha></el-color-picker>
 			<button @click="submitForm">保存答案</button>
 		</div>
 	</div>
@@ -75,7 +77,9 @@ export default {
 			},
 			remainSecond: 3600,
 			countSecond: 3600,
-			len: 0
+			len: 0,
+			backgroundColor: '#ccc',
+			fontColor: '#4f4f4f'
 		};
 	},
 	created() {
@@ -196,23 +200,6 @@ export default {
 		cursor: pointer;
 	}
 }
-.pull-left {
-	float: left;
-}
-/*清除浮动*/
-.clearfix::before,
-.clearfix::after {
-	content: "";
-	display: block;
-	height: 0;
-	line-height: 0;
-	visibility: hidden;
-	clear: both;
-}
-
-.pull-right {
-	float: right;
-}
 button {
 	display: block;
 	padding: 4px 15px;
@@ -221,7 +208,7 @@ button {
 	margin: 0 auto;
 }
 .exam-inner {
-	color: #4f4f4f;
+	// color: #4f4f4f;
 	max-width: 920px;
 	padding: 10px;
 	margin: 0 auto;
@@ -261,13 +248,14 @@ button {
 	width: 310px;
 	border: 1px solid #878787;
 	// text-overflow: auto;
+    background: rgba($color: #fff, $alpha: 0.5);
 	white-space: nowrap;
 	z-index: 2px;
 	.time {
 		text-align: center;
 	}
 	.title {
-		background: #ccc;
+		// background: #ccc;
 		text-align: center;
 	}
 	.content {

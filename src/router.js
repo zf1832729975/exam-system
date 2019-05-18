@@ -29,9 +29,12 @@ const routes = [
             { path: 'question/add', component: _import('question/add') },
             { path: 'stu', component: _import('student/index') },
             { path: 'paper', component: _import('paper/index') },
+            { path: 'paper/add', component: _import('paper/add') },
             { path: 'setting', component: _import('common/setting') },
             { path: 'teacher', component: _import('teacher/index') },
-            { path: 'exam/exam', component: _import('exam/exam')}
+            { path: 'exam/exam', component: _import('exam/exam') },
+            { path: 'exam/index', component: _import('exam/index') }
+
         ]
         // beforeEnter (to, from, next) {
         //     let token = sessionStorage.getItem('token')
