@@ -6,7 +6,7 @@ const db = require('../db')
 router.post('/add', (req, res) => {
    let {user} = req.query
    if (user.role == 'student')return;
-   let sql = 'INSERT INTO student (name, sex, password, classId) VALUES ?'
+   let sql = 'INSERT INTO student (id, name, sex, password, classId) VALUES ?'
    let values = req.body
    db.query(sql, [values], result => {
        res.json({
@@ -41,5 +41,7 @@ router.get('/getStudentList', (req, res) => {
         })
     }
 })
+
+
 
 module.exports = router

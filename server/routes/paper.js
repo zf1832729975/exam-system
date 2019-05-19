@@ -14,7 +14,7 @@ router.get('/save', (req, res) => {
         msg: '添加试卷成功'
     })
     // let data = {
-    //     Paper_name: paperName,
+    //     Paper_name: paperName,   
     //     Paper_Course_name: courseName,
     //     Paper_Teacher: teacherId
     // }

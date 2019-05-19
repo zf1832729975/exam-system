@@ -36,7 +36,10 @@
 				</el-dialog>
 			</div>
 		</div>
-		<el-button style="margin-top: 12px;" @click="nextStop">下一步</el-button>
+		<div style="margin-top: 12px;">
+			<el-button v-show="currStop !== 0"  @click="backStop" type="warning" plain>上一步</el-button>
+			<el-button  @click="nextStop" >下一步</el-button>
+		</div>
 	</div>
 </template>
 
@@ -65,7 +68,7 @@ export default {
 	},
 	created() {
 		this.getCourseList();
-		/*window.onbeforeunload = function(e) {
+		window.onbeforeunload = function(e) {
 			e = e || window.event;
 			// 兼容IE8和Firefox 4之前的版本
 			if (e) {
@@ -73,10 +76,12 @@ export default {
 			}
 			// Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
 			return "关闭提示";
-        };
-        */
+		};
 	},
 	methods: {
+		backStop() {
+			this.currStop--;
+		},
 		nextStop() {
 			if (this.currStop === 0) {
 				if (!this.paper.courseId) {
@@ -104,7 +109,7 @@ export default {
 					role: sessionStorage.role
 				}
 			}).then(res => {
-				console.log("res", res);
+				console.log("科目列表", res);
 				this.courseList = res.data;
 			});
 		}
@@ -119,7 +124,7 @@ export default {
 	margin: 0 auto;
 }
 .test {
-	min-height: 500px;
+	// min-height: 200px;
 	.add-test-btn {
 		position: absolute;
 		top: 40%;

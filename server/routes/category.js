@@ -19,7 +19,7 @@ router.get('/del', (req, res) => {
     }
 })
 
-// 得到分类 根据 课程到得分类
+// 得到分类 根据课程到得分类
 router.get('/get', (req, res) => {
     // let { user, courseId } = req.query
     delete req.query.user 

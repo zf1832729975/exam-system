@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div style="padding: 10px; max-width:1486px; margin: 0 auto;">
 		<el-form :inline="true">
 			<el-form-item>
 				<el-input v-model="search" placeholder="学号或姓名"></el-input>
@@ -38,9 +38,9 @@
 				</el-table-column>
 			</el-table>
 		</el-row>
-		<!-- <el-dialog class="new-student-dialog" title="新增学生" :visible.sync="newStudentDialogVisible"> -->
-		<NewTeacher :classList="classList"/>
-		<!-- </el-dialog> -->
+		<el-dialog class="new-student-dialog" title="新增学生" :visible.sync="newStudentDialogVisible">
+			<NewTeacher :classList="classList"/>
+		</el-dialog>
 	</div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
 		// 得到班级列表
 		getTeacherList() {
 			this.$http("/api/teacher/list").then(({ data }) => {
-			    console.log("data", data);
+				console.log("data", data);
 				this.teacherList = data.data;
 			});
 		},

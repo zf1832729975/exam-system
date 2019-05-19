@@ -75,7 +75,8 @@ import {
   Loading,
   MessageBox,
   Message,
-  Notification
+  Notification,
+  Link
 } from 'element-ui'
 
 Vue.use(Pagination)
@@ -141,8 +142,8 @@ Vue.use(Header)
 Vue.use(Aside)
 Vue.use(Main)
 Vue.use(Footer)
-
 Vue.use(Loading.directive)
+Vue.use(Link)
 
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$msgbox = MessageBox

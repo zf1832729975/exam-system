@@ -34,7 +34,7 @@ router.get('/query', (req, res) => {
                 })
             })
         })
-    } else if(role == 'teacher') {
+    } else if (role == 'teacher') {
         var data = {}
         db.query(` SELECT sex, specialty FROM teacher WHERE id='${id}'; `, [], result => {
             data = {
@@ -62,5 +62,20 @@ router.get('/query', (req, res) => {
 
 })
 
+// 修改信息
+router.get('/editor', (req, res) => {
+    let data = JSON.parse(req.query.data)
+    let oldId = req.query.oldId
+    let table = req.query.table
+    let user = req.query.user
+    if (table === user.role) {
+        res.json({ code: 403, msg: 'no permission' })
+        return
+    }
+    console.log('data', data)
+    db.query(`UPDATE ${table} SET ? WHERE id=?`, [data, oldId], result => {
+        res.json({ code: 0, msg: '修改成功', type: 'success' })
+    })
+})
 
 module.exports = router

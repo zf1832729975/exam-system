@@ -87,13 +87,19 @@ router.post('/add', (req, res) => {
 
 // 得到试题列表
 router.use('/list', (req, res) => {
-    console.log('------------')
-    let countRow
-    db.query('SELECT count(*) FROM `choiceqst`', [], result => {
-        console.log(result[0])
-        countRow = result[0]
-        res.json({ code: 0, msg: 'success', 'countRow': countRow })
+    // let { categoryId, limit = 10, page = 0 } = req.query
+    // db.query(`SELECT * FROM qst_single_view WHERE ?  LIMIT ${page * limit}, ${limit}`, { categoryId }, result => {
+    let { categoryId } = req.query
+    db.query(`SELECT * FROM qst_single_view WHERE ?`, { categoryId }, result => {
+        res.json({ code: 0, result })
     })
+    let countRow
+
+    // db.query('SELECT count(*) FROM `choiceqst`', [], result => {
+    //     console.log(result[0])
+    //     countRow = result[0]
+    //     res.json({ code: 0, msg: 'success', 'countRow': countRow })
+    // })
 
 })
 module.exports = router

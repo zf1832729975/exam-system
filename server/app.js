@@ -109,6 +109,7 @@ app.use('/api/student', _require('student'))
 app.use('/api/teacher', _require('teacher'))
 app.use('/api/exam', _require('exam'))
 app.use('/api/getTest', _require('getTest'))
+app.use('/api/getRandomTest', _require('random-test'))
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404))

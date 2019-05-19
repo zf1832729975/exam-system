@@ -1,7 +1,7 @@
 <template>
 	<!-- 试卷管理 -->
 	<div class="paper">
-		<el-button icon="el-icon-plus" type="primary" size="mini" @click="dialogAddPaperVisible=true">新增试卷</el-button>
+		<el-button icon="el-icon-circle-plus" type="success" plain @click="$router.push({path: '/paper/add'})">新增试卷</el-button>
 
 		<ul class="paper-list">
 			<li v-for="item in paperList" :key="item.id">
