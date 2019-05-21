@@ -45,6 +45,7 @@ import 'element-ui/lib/theme-chalk/base.css';
 // collapse 展开折叠
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import Vue from 'vue'
+import { clearLoginInfo } from '@/utils'
 
 Vue.component(CollapseTransition.name, CollapseTransition)
 
@@ -103,7 +104,10 @@ export default {
 				type: 'warning',
 				center: this.mobile
 			}).then(() => {
-				this.$router.push({ path: '/login' })
+                // this.$router.push({ path: '/login' })
+                this.$router.replace({ path: '/login' })
+
+                clearLoginInfo()
 				this.$message({
 					type: 'success',
 					message: '退出成功，请重新登录!',

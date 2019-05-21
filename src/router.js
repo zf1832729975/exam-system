@@ -49,8 +49,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    // mode: 'hash',
-    mode: 'history',
+    mode: 'hash',
+    // mode: 'history', // 需要后端配合
     routes
 })
 router.beforeEach((to, from, next) => {

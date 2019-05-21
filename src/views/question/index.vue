@@ -68,7 +68,7 @@
 						align="center"
 					>
 						<template slot-scope="scope">
-							<p v-html="scope.row.qstStem"></p>
+							<p v-html="delHtmlTag(scope.row.qstStem)"></p>
 						</template>
 					</el-table-column>
 					<el-table-column
@@ -143,7 +143,7 @@ export default {
 			search: "",
 			listSearch: "",
 			loading: true, // 加载中
-			pageSize: 12, // 分页每一页的大小
+			pageSize: 15, // 分页每一页的大小
 			currentPage: 1, // 当前页
 			categorys: [],
 			pecialty: "", // 专业id
@@ -177,7 +177,7 @@ export default {
 					this.currentPage * this.pageSize
 				);
 			}
-		}
+        }
 	},
 	created() {
 		this.getCategoryList();
@@ -188,6 +188,10 @@ export default {
 		}
 	},
 	methods: {
+         // 去掉html标签
+        delHtmlTag(str) {
+			return str.replace(/<[^>]+>/g, "");
+		},
 		getCategoryList() {
 			this.$http("/api/getcourselist").then(res => {
 				console.log("res.data", res.data);

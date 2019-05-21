@@ -6,7 +6,7 @@ import { clearLoginInfo } from '@/utils'
 
 // axios.baseUrl = '127.0.0.1:3000/api'
 const http = axios.create({
-  timeout: 1000 * 30,
+  timeout: 1000 * 10,
   withCredentials: true,
   /**
    * 在设置跨越的时候，这里的代码 bsesURL这个属性一定不要要，不然跨越就不会成功

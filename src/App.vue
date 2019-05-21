@@ -21,7 +21,8 @@ export default {
 }
 
 body{
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  /* font-family: 'Avenir', Helvetica, Arial, sans-serif; */
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust:100%;
@@ -54,6 +55,9 @@ p{word-wrap:break-word}
 
 .pull-right {
 	float: right;
+}
+.margin-right {
+    margin-right: 15px;
 }
 .inline > div {
     display: inline-block;

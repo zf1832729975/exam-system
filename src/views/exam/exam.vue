@@ -2,7 +2,7 @@
 	<div class="exam" :style="{background: backgroundColor, color: fontColor}">
 		<div class="exam-inner">
 			<h3>C语言考题</h3>
-			<div class="single">
+			<div class="single" v-if="paper.single">
 				<h4>一、 单项选择题</h4>
 				<dl
 					class="test-item qst-stem"
@@ -37,6 +37,60 @@
 					</dd>
 				</dl>
 			</div>
+			<div class="more" v-if="paper.qst_more">
+				<h4>二、多项选择题</h4>
+				<dl
+					class="test-item qst-stem"
+					v-for="(test, index) in paper.qst_more"
+					:key="'more_' + test.id"
+					:id="'TMP_' + (index + 1)"
+				>
+					<dt class="inline clearfix">
+						<div class="pull-left">{{index + 1}}.&nbsp;</div>
+						<div class="pull-left text" v-html="test.qstStem"></div>
+						<div class="pull-left">({{test.score}}分)</div>
+					</dt>
+					<dd>
+						<div v-for="j in 6" :key="j">
+							<div class="inline option clearfix" v-if="test['opt' + j]">
+								<div class="label pull-left">
+                                    {{answerLabels[j - 1]}}.&nbsp;
+									<!-- <label class="checkbox">
+										<input
+											type="checkbox"
+											:name="'more_' + index"
+											:value="j + ''"
+											v-model="answer.more[test.id][j - 1]"
+										>
+										{{answerLabels[j - 1]}}&nbsp; 
+									</label>-->
+									<!-- <el-checkbox :key="'check_' + test.id + j" :label="j">{{answerLabels[j - 1]}}</el-checkbox> -->
+								</div>
+								<div class="text pull-left" v-html="test['opt' + j]"></div>
+							</div>
+						</div>
+
+						<!-- <el-checkbox-group v-model="answer.more[test.id]">
+							<span v-for="j in 6" :key="j">
+								<label v-if="test['opt' + j]">
+									<el-checkbox :label="j">{{answerLabels[j - 1]}}</el-checkbox>
+								</label>
+							</span>
+						</el-checkbox-group> -->
+						<span v-for="j in 6" :key="'more_checkbox' + j">
+							<label class="checkbox" v-if="test['opt' + j]" >
+                                <input
+                                    type="checkbox"
+                                    :name="'more_' + index"
+                                    :value="j + ''"
+                                    v-model="answer.more[test.id][j - 1]"
+                                >
+                                {{answerLabels[j - 1]}}&nbsp;
+							</label>
+						</span>
+					</dd>
+				</dl>
+			</div>
 			<button @click="submitForm">交卷</button>
 		</div>
 		<!-- 答题卡 -->
@@ -53,9 +107,9 @@
 						:href="'#test_' + i"
 					>{{i}}</a>
 				</div>
-			</div>
-			背景颜色 <el-color-picker v-model="backgroundColor" show-alpha></el-color-picker>
-			字体颜色 <el-color-picker v-model="fontColor" show-alpha></el-color-picker>
+			</div>背景颜色
+			<el-color-picker v-model="backgroundColor" show-alpha></el-color-picker>字体颜色
+			<el-color-picker v-model="fontColor" show-alpha></el-color-picker>
 			<button @click="submitForm">保存答案</button>
 		</div>
 	</div>
@@ -78,8 +132,8 @@ export default {
 			remainSecond: 3600,
 			countSecond: 3600,
 			len: 0,
-			backgroundColor: '#ccc',
-			fontColor: '#4f4f4f'
+			backgroundColor: "#ccc",
+			fontColor: "#4f4f4f"
 		};
 	},
 	created() {
@@ -102,13 +156,14 @@ export default {
 			this.$http("/api/exam/getPaperTest").then(({ data }) => {
 				console.log("data", data);
 				this.paper.single = data.single;
+				//
 				// let arr = [];
 				// for (let i = 0; i < data.single.length; i++) {
 				// 	arr.push(["", "", "", ""]);
 				// }
 				// console.log("arr", arr);
 				// this.answer.single = arr;
-				let arr = new Array(data.single.length);
+				/*let arr = new Array(data.single.length);
 				this.answer.single = arr.join(",").split(",");
 				this.answer.single = arr;
 				// this.remainSecond = this.countSecond * 60;
@@ -119,7 +174,16 @@ export default {
 				});
 				this.answer.single = singleAnser;
 				this.len = 9;
-				console.log("singleAnswer", singleAnser);
+                console.log("singleAnswer", singleAnser);*/
+				this.paper.qst_more = data.qst_more;
+				let moreAnswer = {
+					/* id: [1, 2, 3, 4] */
+				};
+
+				data.qst_more.map(item => {
+					moreAnswer[item.id] = [];
+				});
+				this.answer.more = moreAnswer;
 				this.startTime();
 			});
 		},
@@ -151,7 +215,7 @@ export default {
 			return result;
 		},
 		submitForm() {
-			this.$confirm(
+			/*this.$confirm(
 				"请仔细检查试卷, 提交了就不可再更改, 是否交卷?",
 				"提示",
 				{
@@ -164,8 +228,36 @@ export default {
 					type: "success",
 					message: "删除成功!"
 				});
-			});
+			});*/
+
+			/////////////////////////////////////// 解析多选题答案
 			console.log("this.answer", this.answer);
+			let moreAnswer = {};
+			if (this.answer.more) {
+				// this.answer.more.test = [];
+				let testIds = [];
+				let convertAnswers = [];
+				let more = this.answer.more;
+				for (let testId in more) {
+					testIds.push(parseInt(testId));
+					let binStr = "1000000";
+					for (let i = 0; i < more[testId].length; i++) {
+						if (more[testId][i] === true) {
+							binStr =
+								binStr.slice(0, i) + "1" + binStr.slice(i + 1);
+						}
+					}
+					convertAnswers.push(parseInt(binStr, 2));
+				}
+				// this.answer.more = {};
+				// this.answer.more.testIds = testIds;
+				// this.answer.more.answers = convertAnswers;
+				moreAnswer.testIds = testIds;
+				moreAnswer.answers = convertAnswers;
+			}
+			console.log("moreAnswer", moreAnswer);
+
+			return;
 
 			this.$http
 				.post("/api/exam/record/save", {
@@ -194,11 +286,17 @@ export default {
 	background: #f9f9f9;
 	padding-bottom: 300px;
 }
-.radio {
+
+.radio,
+.checkbox {
 	cursor: pointer;
+	padding: 1px 4px;
 	input {
 		cursor: pointer;
 	}
+}
+dd {
+	margin-inline-start: 15px;
 }
 button {
 	display: block;
@@ -226,9 +324,6 @@ button {
 				cursor: pointer;
 			}
 		}
-		dd {
-			margin-inline-start: 15px;
-		}
 	}
 	.qst-stem,
 	option {
@@ -248,7 +343,7 @@ button {
 	width: 310px;
 	border: 1px solid #878787;
 	// text-overflow: auto;
-    background: rgba($color: #fff, $alpha: 0.5);
+	background: rgba($color: #fff, $alpha: 0.5);
 	white-space: nowrap;
 	z-index: 2px;
 	.time {

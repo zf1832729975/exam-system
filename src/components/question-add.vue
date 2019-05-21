@@ -38,7 +38,7 @@
 
 			<div class="right-asw clearfix">
 				<div class="pull-left inline">
-					正确答案
+                    正确答案
 					<!-- 单项选择题 -->
 					<div v-if="btnActive === 0" class="opt">
 						<el-radio-group v-model="answer">
@@ -61,8 +61,8 @@
 				</div>
 				<div class="score pull-left">
 					分数&nbsp;&nbsp;
-					<!-- 不是设计题 -->
-					<el-input-number :min="1" :max=" btnActive !== 4 ? 5 : 30" v-model="score"></el-input-number>
+                    <!-- 不是设计题 -->
+					<el-input-number  :min="1" :max=" btnActive !== 4 ? 5 : 30"  v-model="score"></el-input-number>
 				</div>
 			</div>
 
@@ -70,34 +70,32 @@
 				题目解析
 				<div id="analysis"></div>
 			</div>
-			<div class="clearfix">
-				<!-- 试题类别 -->
-				<div class="box pull-left margin-right">
-					<span>分类</span>
-					<!-- <el-select v-model="courseId" placeholder="请选择">
+			<!-- 试题类别 -->
+			<div class="box">
+				<div>分类</div>
+				<!-- <el-select v-model="courseId" placeholder="请选择">
                     <el-option
                     v-for="item in courseList"
                     :key="item.Course_id"
                     :label="item.Course_name"
                     :value="item.Course_id">
                     </el-option>
-					</el-select>-->
-					<el-cascader
-						:options="courseList"
-						v-model="selectdeCategory"
-						:props="{'label': 'name', 'value': 'id'}"
-					></el-cascader>
-					<el-button @click="getCourseList">重新加载</el-button>
-				</div>
-
-				<div class="box pull-left  margin-right">
-					<span>试题难易度</span>
-					<el-radio-group v-model="difficult">
-						<el-radio v-for="(item, i) in difficultList" :key="item" :label="i">{{difficultList[i]}}</el-radio>
-					</el-radio-group>
-				</div>
-				<!-- <el-button  class="box" type="primary" @click="submit">保存</el-button> -->
+				</el-select>-->
+				<el-cascader
+					:options="courseList"
+					v-model="selectdeCategory"
+					:props="{'label': 'name', 'value': 'id'}"
+				></el-cascader>
+				<el-button @click="getCourseList">重新加载</el-button>
 			</div>
+
+			<div class="box">
+				<div>试题难易度</div>
+				<el-radio-group v-model="difficult">
+					<el-radio v-for="(item, i) in difficultList" :key="item" :label="i">{{difficultList[i]}}</el-radio>
+				</el-radio-group>
+			</div>
+			<el-button type="primary" @click="submit">保存</el-button>
 		</div>
 	</div>
 </template>
@@ -240,26 +238,31 @@ export default {
 			console.log("this.multipleAswList", this.multipleAswList);
 
 			if (!this.qstStemContent.txt.text()) {
-				this.$message({ message: "题干不能为空！", type: "warning" });
+				this.$message("题干不能为空！");
 				return false;
 			}
 			////////////////////////////// 多选题 ////////////////////////////////
 			if (this.btnActive === 1) {
 				// 不定项
 				if (this.multipleAswList.length < 1) {
-					this.$message({ message: "请选择答案", type: "warning" });
+					this.$message({
+						message: "请选择答案",
+						type: "warning"
+					});
 					return;
 				}
 				let binStr = "1000000"; // 最多6个	在前面加 1 转换成二进制字符串 刚好最大值 127
 				for (let i = 0; i < this.multipleAswList.length; i++) {
 					let value = this.multipleAswList[i];
 					binStr =
-						binStr.slice(0, value) + "1" + binStr.slice(value + 1);
+						binStr.slice(0, value + 1) +
+						"1" +
+						binStr.slice(value + 2);
 				}
 				this.answer = parseInt(binStr, 2);
 			}
 			if (this.selectdeCategory.length <= 1) {
-				this.$message({ message: "请选择分类", type: "warning" });
+				this.$message("请选择分类");
 				return false;
 			}
 
@@ -274,8 +277,8 @@ export default {
 				answer: this.answer,
 				categoryId: this.selectdeCategory[1],
 				difficult: this.difficult + 1,
-				analysis,
-				score: this.score
+                analysis,
+                score: this.score
 			};
 
 			for (let i = 0; i < this.aswOptCount; i++) {
@@ -306,8 +309,6 @@ export default {
 						this.aswOptContent.map(item => {
 							item.txt.clear();
 						});
-						this.analysisContent.txt.clear();
-						this.multipleAswList = []; // 多选题的答案要清楚
 					} else {
 						this.$message.error(res.data.msg);
 					}
@@ -334,7 +335,7 @@ export default {
 	max-width: 1100px;
 	margin: 0 auto;
 	overflow: hidden;
-	padding-bottom: 400px;
+	padding-bottom: 150px;
 	// background: #f5f5f5;
 }
 @media screen and (max-width: 1200px) {
@@ -385,7 +386,7 @@ export default {
 </style>
  <style lang="scss">
 /* 编辑框默认样式修改 
--------------------------------------------*/
+		-------------------------------------------*/
 .add-test {
 	.w-e-toolbar,
 	.w-e-text-container {

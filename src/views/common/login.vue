@@ -31,8 +31,10 @@
 				</el-form-item>
 
 				<el-form-item>
-					<el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()" 
-					:icon="submiting ? 'el-icon-loading' : ''" :size="size">登录</el-button>
+					<el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()" :size="size">
+                        登录
+                        <i :class="submiting ? 'el-icon-loading' : ''"></i>
+                    </el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -101,25 +103,6 @@
 							this.$message.error('系统错误，登录失败，请联系管理员')
 							this.submiting = false
 						})
-
-						// this.$http({
-						//   url: this.$http.adornUrl('/sys/login'),
-						//   method: 'post',
-						//   data: this.$http.adornData({
-						//     'username': this.dataForm.userName,
-						//     'password': this.dataForm.password,
-						//     'uuid': this.dataForm.uuid,
-						//     'captcha': this.dataForm.captcha
-						//   })
-						// }).then(({data}) => {
-						//   if (data && data.code === 0) {
-						//     this.$cookie.set('token', data.token)
-						//     this.$router.replace({ name: 'home' })
-						//   } else {
-						//     this.getCaptcha()
-						//     this.$message.error(data.msg)
-						//   }
-						// })
 					}
 				})
 			},
@@ -203,4 +186,3 @@
        }
     }
 </style>
-+

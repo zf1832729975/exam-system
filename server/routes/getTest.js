@@ -36,19 +36,21 @@ router.post('/number', (req, res) => {
     let { categoryIds } = req.body
     let tables = ['qst_single', 'qst_more', 'qst_judge', 'qst_gap_filling', 'qst_design']
     let tableLabels = ['单选题', '多选题', '判断题', '填空题', '设计题']
-    let testNumber = {}
+    let testNumber = {  }
 
     console.log('categoryIds', categoryIds)
     categoryIds.map((categoryId, index) => {
-        testNumber[categoryId] = { sum: 0, type: {} }
+        testNumber[categoryId] = { sum: 0, type: {}, types: [] }
         tables.map((tName, j) => {
             db.query(`SELECT COUNT (*) FROM ${tName} WHERE categoryId = ${categoryId}`, {}, result => {
                 console.log('result', result)
                 if (result[0]['COUNT (*)'] > 0) {
                     testNumber[categoryId].sum += result[0]['COUNT (*)']
+                    testNumber[categoryId].types.push(tName)
                     testNumber[categoryId]['type'][tName] = {
                         count: result[0]['COUNT (*)'],
-                        tLabel: tableLabels[j]
+                        tLabel: tableLabels[j],
+                        tName: tName
                     }
                 }
                 if (j === tables.length - 1 && index === categoryIds.length - 1) {

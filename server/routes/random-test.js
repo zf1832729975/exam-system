@@ -3,11 +3,59 @@
 const router = require('express').Router()
 const db = require('../db')
 
-router.post('/', (req, res) =>　{
-    console.log('req.body', req.body)
-    let data =  req.body.data
+
+
+/**
+ * 有循环，必须要有数组才能判断是否执行完，或者用同步的方法
+req.boyd = 
+{	categorys: [分类id， 分类id],
+    分类id: {
+        types: ['单项']
+        单选: {
+            count: 5
+        },
+        多选： {
+
+        }
+        .....
+    },
+    .....
+    ...
+}
+*/
+
+router.post('/', (req, res) => {
+
+    let data = req.body
+    if (typeof data !== 'object') {
+        res.json({ code: 400, msg: 'Data is not an object' })
+        return
+    }
+    let rData = {}
+    let cLen = data.categorys.length;
     console.log('data', data)
-    console.log('Object.getOwnPropertyNames(foo)', Object.getOwnPropertyNames(data))
+    for (let index = 0; index < cLen; index++) {
+        let cName = data.categorys[index]
+        let tLen = data[cName].types.length
+        for (let j = 0; j < tLen; j++) {
+            let tName = data[cName].types[j]
+            if (!rData[tName]) rData[tName] = []
+            console.log('tName', tName)
+            let count = data[cName][tName].count
+            db.query(`SELECT * FROM ${tName}  order by rand()  LIMIT ${count}`, [], result => {
+                // console.log('result, index', result, index)
+                rData[tName] = rData[tName].concat(result)
+                console.log('rData', rData)
+                if (index === cLen - 1 && j == tLen - 1) {
+                    res.json({
+                        code: 0,
+                        data: rData
+                    })
+                }
+            })
+
+        }
+    }
     // for (let categoryId, index in data) {
     //     console.log('categoryId, index', categoryId, index)
     // }
@@ -24,7 +72,7 @@ router.post('/', (req, res) =>　{
     //         result
     //     })
     // })
-   
+
 })
 
 module.exports = router

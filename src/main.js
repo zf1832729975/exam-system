@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import router from '@/router.js'
-import store from '@/store' 
+import store from '@/store'
 import App from './App.vue'
 import '@/element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -14,7 +14,13 @@ Vue.prototype.$http = httpRequest // ajax请求方法
 // 保存整站vuex本地储存初始状态
 // window.SITE_CONFIG['storeState'] = cloneDeep(store.state)
 
+Vue.directive('delHtmlTag', {   // 去掉html标签
+    bind: function (el, binding, vnode) {
+        return binding.value.replace(/<[^>]+>/g, "");
+    },
+})
+
 new Vue({
-  render: h => h(App),
-  router
+    render: h => h(App),
+    router
 }).$mount('#app')

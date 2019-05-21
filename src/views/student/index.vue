@@ -220,8 +220,8 @@ export default {
 							type: data.type,
 							message: data.msg
 						});
-                    }
-                    this.editorStudentDialogVisible = false
+					}
+					this.editorStudentDialogVisible = false;
 				})
 				.catch(err => {
 					this.$message.error("修改失败");
@@ -237,24 +237,30 @@ export default {
 		},
 		// 批量删除
 		batchDelStudent() {
-			if (this.isHandling) return;
-			this.isHandling = true;
-			let data = [];
-			this.multipleSelection.map(item => {
-				data.push(item.id);
-			});
-			this.$http
-				.post("/api/student/del", data)
-				.then(({ data }) => {
-					this.$message({
-						message: data.msg,
-						type: data.type
-					});
-					this.isHandling = false;
-				})
-				.catch(err => {
-					this.isHandling = false;
+            if (this.isHandling) return;
+			this.$confirm("此操作将永久删除选中的所有学生, 是否继续?", "提示", {
+				confirmButtonText: "确定",
+				cancelButtonText: "取消",
+				type: "warning"
+			}).then(() => {
+				this.isHandling = true;
+				let data = [];
+				this.multipleSelection.map(item => {
+					data.push(item.id);
 				});
+				this.$http
+					.post("/api/student/del", data)
+					.then(({ data }) => {
+						this.$message({
+							message: data.msg,
+							type: data.type
+						});
+						this.isHandling = false;
+					})
+					.catch(err => {
+						this.isHandling = false;
+					});
+			});
 		},
 		// 单个删除
 		singleDelStudent(index, row) {

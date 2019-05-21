@@ -5,11 +5,13 @@ const db = require('../db')
 // 得到试卷考试内容
 router.get('/getPaperTest', (req, res) => {
     let { role, id } = req.query.user
-    let sql = 'select * from qst_single;'
+    // let sql = 'select * from qst_single;'
+    let sql = 'select * from qst_more'
     db.query(sql, [], result => {
         res.json({
             code: 0,
-            single: result
+            // single: result
+            qst_more: result
         })
     })
 })
