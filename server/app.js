@@ -34,10 +34,15 @@ app.use(session({
 */
 // app.all('*',function(req, res, next) {
 // 	console.log('req.path', req.path)
-// 	res.header('Access-Control-Allow-Origin', '*') 
-// 	res.header("Access-Control-Allow-Headers", "X-Requested-With")
-// 	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
-// 	res.header("X-Powered-By", ' 3.2.1')
+// 	// res.header('Access-Control-Allow-Origin', '*') 
+// 	// res.header("Access-Control-Allow-Headers", "X-Requested-With")
+// 	// res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
+//     // res.header("X-Powered-By", ' 3.2.1')
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+//     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+//     res.header("X-Powered-By",' 3.2.1')
+
 // 	// res.header("Content-Type", "application/jsoncharset=utf-8")
 // 	/* 报错的原因是前后端的请求头没有对应上，解决方法 */
 // 	/* 后端不在设置数据类型，意思就是前端你随意发，我什么都接着。 */
@@ -52,12 +57,13 @@ app.use(session({
 // })
 
 
+
 /* corse跨越设置
 -------------------------------------------------- */
 // app.use(cors({credentials: true, origin: 'http://www.7749tian.com'})); 
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:8001', 'http://192.168.199.187:8001', 'http://192.168.1.211:8001', 'http://192.168.1.203', 'http://www.7749tian.com']
+    origin: ['http://localhost:8080', 'http://192.168.199.187:8080', 'http://192.168.1.211:8080', 'http://192.168.1.203', 'http://www.7749tian.com']
 }));
 
 app.all('*', function (req, res, next) {

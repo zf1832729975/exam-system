@@ -14,6 +14,7 @@
 			<p class="label">试卷标题</p>
 			<el-input v-model="paper.title" autocomplete="off" placeholder="请输入试卷标题"></el-input>
 		</div>
+		<!-- ========================= 第二步  ========================= -->
 		<div v-show="currStop === 1">
 			<div>
 				<span>组卷方式</span>
@@ -24,6 +25,12 @@
 				</el-radio-group>
 			</div>
 			<div class="test">
+				<div class="pull-right">
+					<span class="margin-right">试题类型:</span>
+					<el-select v-model="acitvieTestType">
+						<el-option v-for="item in testType" :key="item.name" :value="item.name" :label="item.label"></el-option>
+					</el-select>
+				</div>
 				<div class="add-test-btn">
 					<el-button icon="el-icon-circle-plus-outline" @click="dialogVisible = true">添加试题</el-button>
 				</div>
@@ -37,10 +44,12 @@
 				</el-dialog>
 			</div>
 
+			<!-- -------------------------------------------------------------------- -->
+			<!-- 表格 -->
 			<div class="paper-contet">
-				<el-table :data="paperContent.fixed.qst_single" style="width:100%">
+				<el-table :data="paperContent.fixed[acitvieTestType]" style="width:100%">
 					<!-- 选择框  -->
-					<el-table-column type="selection" width="40"></el-table-column>
+					<!-- <el-table-column type="selection" width="40"></el-table-column> -->
 					<el-table-column type="index" column-key="index"></el-table-column>
 					<el-table-column
 						prop="qstStem"
@@ -70,17 +79,8 @@
 						</template>
 					</el-table-column>
 
-					<el-table-column prop="teacherName" label="教师" sortable width="72"></el-table-column>
-					<el-table-column prop="category" label="试题分类" sortable width="100"></el-table-column>
-					<el-table-column
-						prop="type"
-						label="题型"
-						width="72"
-						:filters="[{ text: '单选题', value: '单选题' }, { text: '多选题', value: '多选题' }, { text: '简答题', value: '简答题'}, { text: '判断题', value: '判断题'}]"
-						:filter-method="filterType"
-					></el-table-column>
 					<el-table-column prop="score" label="分数" sortable width="50"></el-table-column>
-					<el-table-column label="操作" width="145">
+					<!-- <el-table-column label="操作" width="145">
 						<template slot-scope="scope">
 							<el-button title="编辑" type="primary" plain @click="handleEdit(scope.$index, scope.row)">
 								<i class="el-icon-edit"></i>
@@ -89,13 +89,62 @@
 								<i class="el-icon-delete"></i>
 							</el-button>
 						</template>
+					</el-table-column>-->
+
+					<el-table-column label="操作" width="145">
+						<template slot-scope="scope">
+							<el-popover placement="bottom-status" width="80%" title="详细内容" trigger="click">
+								<TestDeatil :test="scope.row"/>
+								<el-button slot="reference" type="primary" plain>
+									查看
+									<i class="el-icon-view"></i>
+								</el-button>
+							</el-popover>
+						</template>
 					</el-table-column>
 				</el-table>
 			</div>
+			<!-- 表格结束 -->
+			<!-- ---------------------------------------------------------------------------------- -->
 		</div>
-		<div style="margin-top: 12px;">
+		<!-- ========================= 第三步  ========================= -->
+		<div v-show="currStop === 2">
+			<div>
+				<PaperSetting :classList="classList" :paper="paper"/>
+			</div>
+		</div>
+
+		<div v-show="currStop === 3">
+			<div>
+				<!-- <PaperSetting :classList="classList" :paper="paper"/> -->
+				试卷预览.....
+				<div>
+					试卷标题：
+					<b>{{paper.title}}</b>
+				</div>
+				<div>试卷开放时间： {{paper.startDate}} 至 {{paper.endDate}}</div>
+				<span>考试总时间 {{paper.totalTime}}</span> 分钟
+				<!-- <div>
+                    能考试的班级 
+                    <span v-show="paper.canJoinClassId.length < 1"> 所有班级可考 </span>
+                    <span v-for="paper in paper.canJoinClassId"></span>
+				</div>-->
+				<el-button
+					@click="submit"
+					:disabled="handing"
+					:icon="handing ? 'el-icon-loading' : 'el-icon-thumb' "
+				>保存</el-button>
+			</div>
+		</div>
+		<div class="pull-right" style="margin-top: 12px;">
 			<el-button v-show="currStop !== 0" @click="backStop" type="warning" plain>上一步</el-button>
-			<el-button @click="nextStop" :disabled="false">下一步</el-button>
+			<el-button v-show="currStop < 2" @click="nextStop" :disabled="false" type="primary" plain>下一步</el-button>
+			<el-button
+				v-show="currStop === 2"
+				@click="submit"
+				:disabled="handing"
+				:icon="handing ? 'el-icon-loading' : 'el-icon-thumb' "
+			>保存</el-button>
 		</div>
 	</div>
 </template>
@@ -174,32 +223,62 @@ table.map((tName, i) => {
 */
 // import AddDialog from "./add-dialog";
 import RandomTest from "./random-test";
-
+import TestDeatil from "@/components/test-detail";
+import PaperSetting from "./paper-setting";
 export default {
 	components: {
-		// AddDialog
-		RandomTest
+		RandomTest,
+		TestDeatil,
+		PaperSetting
 	},
 	data() {
 		return {
 			currStop: 0,
 			courseList: [],
 			dialogVisible: false,
+			acitvieTestType: "qst_single", // 当前激活的试题类型
+			testType: [
+				// 试题类型
+				{
+					name: "qst_single",
+					label: "单项选择题"
+				},
+				{
+					name: "qst_more",
+					label: "多项选择题"
+				},
+				{
+					name: "qst_judge",
+					label: "判断题"
+				},
+				{
+					name: "qst_gap_fillging",
+					label: "填空题"
+				},
+				{
+					name: "qst_design",
+					label: "问答题"
+				}
+			],
+
 			paperContent: {
 				fixed: {},
 				random: {}
 			},
+			classList: [],
 			paper: {
-				way: "fixed",
 				title: "",
 				courseId: "",
-				teacherId: sessionStorage.userId,
+				teacherId: parseInt(sessionStorage.userId),
 				content: "",
-				startDate: null,
-				endDate: null,
-				totalTime: ""
+				startDate: new Date(),
+				endDate: new Date().getTime() + 3600 * 1000 * 24 * 7, // 往后一周
+				totalTime: 60,
+				status: 2,
+				canJoinClassId: []
 			},
-			difficultLabel: ["简单", "一般", "困难"]
+			difficultLabel: ["简单", "一般", "困难"],
+			handing: false
 		};
 	},
 	created() {
@@ -215,6 +294,9 @@ export default {
 		};
 	},
 	methods: {
+		info() {
+			console.log("this.paper", this.paper);
+		},
 		delHtmlTag(str) {
 			return str.replace(/<[^>]+>/g, "");
 		},
@@ -245,6 +327,15 @@ export default {
 				}
 			}
 			if (this.currStop++ > 2) this.currStop = 0;
+			if (this.currStop === 2) {
+				// 第三步  得到能考的班级
+				this.$http("/api/class/getName", {
+					params: { courseId: this.paper.courseId }
+				}).then(({ data }) => {
+					console.log("班级列表data", data);
+					this.classList = data.data;
+				});
+			}
 		},
 		// 得到课程列表
 		getCourseList() {
@@ -262,12 +353,47 @@ export default {
 		fixedRandomTest(data) {
 			console.log("parent");
 			console.log("固定试题随机数据data", data);
-            // this.paperContent.fixed.qst_single = data.qst_single;
-            for (let tName in data) {
-                this.paperContent.fixed[tName] = data[tName]
-            }
+			// this.paperContent.fixed.qst_single = data.qst_single;
+			for (let tName in data) {
+				this.paperContent.fixed[tName] = data[tName];
+			}
 			console.log("this.paperContent", this.paperContent);
 			this.dialogVisible = false;
+		},
+		submit() {
+			if (this.handing) return;
+			this.handing = true;
+			let obj = {};
+			let data = JSON.parse(JSON.stringify(this.paper));
+			data.canJoinClassId = JSON.stringify(data.canJoinClassId);
+			for (let fixed in this.paperContent) {
+				obj[fixed] = {};
+				for (let type in this.paperContent[fixed]) {
+					obj[fixed][type] = [];
+					this.paperContent[fixed][type].map(test => {
+						obj[fixed][type].push(test.id);
+					});
+					// 排序
+					obj[fixed][type].sort(function(a, b) {
+						return a - b;
+					});
+				}
+			}
+			data.content = JSON.stringify(obj);
+			this.$http
+				.post("/api/paper/save", data)
+				.then(({ data }) => {
+					console.log("data", data);
+					if (data.code === 0) {
+						this.$message({ type: "success", message: data.msg });
+					}
+					this.handing = false;
+				})
+				.catch(err => {
+					console.log("err", err);
+					this.$message.error("保持失败请稍后重试");
+					this.handing = false;
+				});
 		}
 	}
 };

@@ -23,9 +23,20 @@ req.boyd =
     ...
 }
 */
+function randomTest (index, tName, count, rData, cLen, tLen, j, res) {
+    db.query(`SELECT * FROM ${tName}  order by rand()  LIMIT ${count}`, [], result => {
+        rData[tName] = rData[tName].concat(result)
+        if (index === cLen - 1 && j === tLen - 1) {
+            console.log('rData============================================\n', rData)
+            res.json({
+                code: 0,
+                data: rData
+            })
+        }
+    })
+}
 
-router.post('/', (req, res) => {
-
+router.post('/', async (req, res) => {
     let data = req.body
     if (typeof data !== 'object') {
         res.json({ code: 400, msg: 'Data is not an object' })
@@ -40,20 +51,20 @@ router.post('/', (req, res) => {
         for (let j = 0; j < tLen; j++) {
             let tName = data[cName].types[j]
             if (!rData[tName]) rData[tName] = []
-            console.log('tName', tName)
-            let count = data[cName][tName].count
-            db.query(`SELECT * FROM ${tName}  order by rand()  LIMIT ${count}`, [], result => {
-                // console.log('result, index', result, index)
-                rData[tName] = rData[tName].concat(result)
-                console.log('rData', rData)
-                if (index === cLen - 1 && j == tLen - 1) {
-                    res.json({
-                        code: 0,
-                        data: rData
-                    })
-                }
-            })
-
+            let count = data[cName][tName].count;
+            // randomTest(index, tName, count, rData, cLen, tLen, j, res)
+            ; (function (index, tName, count, rData, cLen, tLen, j) {
+                 db.query(`SELECT * FROM ${tName}  order by rand()  LIMIT ${count}`, [], result => {
+                    rData[tName] = rData[tName].concat(result)
+                    if (index === cLen - 1 && j === tLen - 1) {
+                        console.log('rData============================================\n', rData)
+                        res.json({
+                            code: 0,
+                            data: rData
+                        })
+                    }
+                })
+            })(index, tName, count, rData, cLen, tLen, j);
         }
     }
     // for (let categoryId, index in data) {
@@ -74,5 +85,6 @@ router.post('/', (req, res) => {
     // })
 
 })
+
 
 module.exports = router

@@ -4,14 +4,17 @@
 			<i class="el-icon-s-unfold fold" size="30" @click="navBtnActive = !navBtnActive "></i>
 			<el-collapse-transition>
 				<div class="nav" ref="nav" :class="{'nav-active': navBtnActive, mobile: mobile }">
-					<el-menu class="navbar-menu-left" :mode="mode" >
-						<el-menu-item v-for="(menu, index) in menuList" :key="index" :index="index + ''" @click="menuClick(menu)">
-							{{menu.title}}
-						</el-menu-item>
+					<el-menu class="navbar-menu-left" :mode="mode">
+						<el-menu-item
+							v-for="(menu, index) in menuList[role]"
+							:key="index"
+							:index="index + ''"
+							@click="menuClick(menu)"
+						>{{menu.title}}</el-menu-item>
 						<!-- <el-menu-item index="5">考生管理</el-menu-item>
 						<el-menu-item index="6">试卷管理</el-menu-item>
 						<el-menu-item index="7" @click="navClick">题库管理</el-menu-item>
-						<el-menu-item index="8" @click="navClick">试题管理</el-menu-item> -->
+						<el-menu-item index="8" @click="navClick">试题管理</el-menu-item>-->
 					</el-menu>
 					<el-menu class="navbar-menu-right" :mode="mode">
 						<el-menu-item index="1" @click="$router.push({ path: '/setting' })">
@@ -19,7 +22,7 @@
 							<span slot="title">设置</span>
 						</el-menu-item>
 						<el-menu-item index="2">
-							<i class="el-icon-user-solid" ></i>
+							<i class="el-icon-user-solid"></i>
 							<span slot="title">{{userName}}</span>
 						</el-menu-item>
 						<el-menu-item index="3" @click="exit">
@@ -41,91 +44,104 @@
 <script>
 // fade/zoom 等
 // 按需引入
-import 'element-ui/lib/theme-chalk/base.css';
+import "element-ui/lib/theme-chalk/base.css";
 // collapse 展开折叠
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
-import Vue from 'vue'
-import { clearLoginInfo } from '@/utils'
+import CollapseTransition from "element-ui/lib/transitions/collapse-transition";
+import Vue from "vue";
+import { clearLoginInfo } from "@/utils";
 
-Vue.component(CollapseTransition.name, CollapseTransition)
+Vue.component(CollapseTransition.name, CollapseTransition);
 
 export default {
-	data () {
+	data() {
 		return {
-			menuList: [
-				{title: '考生管理', path: '/stu'},
-				{title: '试卷管理', path: '/paper'},
-				{title: '题库管理', path: '/question'},
-				{title: '教师管理', path: '/teacher'}
-			],
+			menuList: {
+				student: [
+					{ title: "个人中心", path: "/self" }
+				],
+				teacher: [
+					{ title: "考生管理", path: "/stu" },
+					{ title: "试卷管理", path: "/paper" },
+					{ title: "题库管理", path: "/question" }
+				],
+				admin: [
+					{ title: "考生管理", path: "/stu" },
+					{ title: "试卷管理", path: "/paper" },
+					{ title: "题库管理", path: "/question" },
+					{ title: "教师管理", path: "/teacher" }
+				]
+			},
 			navBtnActive: false,
-			mobile: false	// 手机设备
-		}
+			mobile: false // 手机设备
+		};
 	},
 	computed: {
-		userName () {
-			return sessionStorage.userName
+		userName() {
+			return sessionStorage.userName;
 		},
-		role () {
-			return sessionStorage.role
+		role() {
+			return sessionStorage.role;
 		},
-		mode () {	// horizontal / vertical
-			return this.mobile ? 'vertical' : 'horizontal' 		
+		mode() {
+			// horizontal / vertical
+			return this.mobile ? "vertical" : "horizontal";
 		}
 	},
-	mounted () {
-		this.resetDocumentClientHeight()
-		window.onresize = this.resetDocumentClientHeight
-		if (this.role === 'student') {
+	mounted() {
+		this.resetDocumentClientHeight();
+		window.onresize = this.resetDocumentClientHeight;
+		if (this.role === "student") {
 			this.$notify({
-				title: '欢迎你~ ' + this.userName,
+				title: "欢迎你~ " + this.userName,
 				dangerouslyUseHTMLString: true,
-				message: '请诚信考试',
+				message: "请诚信考试",
 				duration: 0
-			})
+			});
 		} else {
 			this.$notify({
-				title: '嗨： ' + this.userName + (this.role === 'teacher'  ? '老师 ' :  '管理员')  +  ' 你好 ~~'
-			})
+				title:
+					"嗨： " +
+					this.userName +
+					(this.role === "teacher" ? "老师 " : "管理员") +
+					" 你好 ~~"
+			});
 		}
-		
 	},
 	methods: {
-		 // 重置窗口可视高度
-		resetDocumentClientHeight () {
-			let width = document.documentElement['clientWidth']
-			this.mobile = width <=  720
-			if (width >= 720) this.navBtnActive = false
+		// 重置窗口可视高度
+		resetDocumentClientHeight() {
+			let width = document.documentElement["clientWidth"];
+			this.mobile = width <= 720;
+			if (width >= 720) this.navBtnActive = false;
 		},
-		exit () {
-			 this.$confirm('是否退出', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning',
+		exit() {
+			this.$confirm("是否退出", "提示", {
+				confirmButtonText: "确定",
+				cancelButtonText: "取消",
+				type: "warning",
 				center: this.mobile
 			}).then(() => {
-                // this.$router.push({ path: '/login' })
-                this.$router.replace({ path: '/login' })
+				// this.$router.push({ path: '/login' })
+				this.$router.replace({ path: "/login" });
 
-                clearLoginInfo()
+				clearLoginInfo();
 				this.$message({
-					type: 'success',
-					message: '退出成功，请重新登录!',
-					center: this.mobile					
+					type: "success",
+					message: "退出成功，请重新登录!",
+					center: this.mobile
 				});
-			})
+			});
 		},
 
 		// 导航栏菜单点击
-		menuClick (menu) {
-			console.log('menu', menu)
+		menuClick(menu) {
+			console.log("menu", menu);
 			if (menu.path) {
-				this.$router.push({ path: menu.path })
+				this.$router.push({ path: menu.path });
 			}
 		}
 	}
-	
-}
+};
 </script>
 
 <style lang="scss">
@@ -163,7 +179,7 @@ export default {
 				color: #3d91ff;
 				background: rgba(255, 255, 255, 0);
 				// background: #262626;
-				border-bottom:0
+				border-bottom: 0;
 			}
 			// &.is-active {
 			// 	border-bottom: 1px solid #3d91ff;
@@ -187,14 +203,14 @@ export default {
 .site-conten {
 	// padding-top: 45px;
 	// padding: 10px;
-}	
+}
 @media screen and (max-width: 720px) {
 	.site-header {
 		.nav {
 			display: block;
 			transition: all 3s;
 			.navbar-menu-right.el-menu {
-			   width: 100%;
+				width: 100%;
 			}
 		}
 
@@ -204,8 +220,6 @@ export default {
 			cursor: pointer;
 		}
 	}
-	
 }
-	
 </style>
 

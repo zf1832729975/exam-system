@@ -33,7 +33,8 @@ const routes = [
             { path: 'setting', component: _import('common/setting') },
             { path: 'teacher', component: _import('teacher/index') },
             { path: 'exam/exam', component: _import('exam/exam') },
-            { path: 'exam/index', component: _import('exam/index') }
+            { path: 'exam/index', component: _import('exam/index') },
+            { path: 'self', component: _import('common/self') },
 
         ]
         // beforeEnter (to, from, next) {

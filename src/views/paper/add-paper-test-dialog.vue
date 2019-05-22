@@ -1,77 +1,26 @@
 <template>
-	<!-- ----------------------- 从题库中随机选取 ------------------------------ -->
-	<div class="random-test">
-		<p class="title">已选择的分类</p>
-		<p class="label">
-			将从
-			<i>{{showCategorys.length}}</i>个分类随机抽取
-			<i>{{randomSelecltTestCount}}</i> 个试题
-		</p>
-		<div v-show="showCategorys.length >= 1" class="content">
-			<ul>
-				<li v-for="item in showCategorys" :key="item.id">
-					<dt>
-						<!-- 删除 -->
-						<h6>{{item.name}} ({{item.sum}} 道试题)</h6>
-					</dt>
-					<dd v-for="(type, index) in item.type" :key="index">
-						<span>{{ type.tLabel }} ({{type.count}} 道试题)</span>
-						抽选
-						<el-input-number
-							v-model="selectValue[item.id][type.tName].count"
-							controls-position="right"
-							:min="0"
-							:max="type.count"
-						></el-input-number>&nbsp;道试题
-					</dd>
-				</li>
-			</ul>
-		</div>
-		<el-button round @click="dialogVisible = true" type="success" plain icon="el-icon-s-grid">选择分类</el-button>
-		<el-button
-			round
-			@click="currDialogConfirm(selectValue, randomSelecltTestCount)"
-			type="primary"
-			plain
-			v-show="showCategorys.length >= 1"
-		>
-			{{ currDialogConfirmBtn ? '生成中' : '确定' }}
-			<i
-				:class="currDialogConfirmBtn ? 'el-icon-loading' : 'el-icon-check'"
-			></i>
-		</el-button>
+	<el-tabs type="border-card" class="add_paper_test_dialog">
+		<!-- ----------------------------------------------------- -->
+		<!-- 从题库中随机选取  -->
+		<el-tab-pane label="从题库中随机选取">
+			
+		</el-tab-pane>
 		<!-- --------------------------------------------------------- -->
-		<!-- 选择分类对话框 -->
-
-		<el-dialog
-			title="请选择试题分类"
-			:visible.sync="dialogVisible"
-			:modal-append-to-body="false"
-			width="30%"
-		>
-			<div v-show="allCategorys.length < 1">
-				<el-link type="info" @click="$router.push({path: '/question/add'})">该科目还没有录入试题，赶快去录入试题吧</el-link>
-			</div>
-			<el-checkbox-group v-model="selectedCategorys">
-				<div v-for="category in allCategorys" :key="category.id">
-					<el-checkbox
-						:label="category"
-						:disabled="!category.sum"
-					>{{category.name}} ({{category.sum}}道试题)</el-checkbox>
-				</div>
-			</el-checkbox-group>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="success" plain @click="cetegoryDialogConfirm">确 定</el-button>
-			</span>
-		</el-dialog>
-		<!-- --------------------------------------------------------- -->
-	</div>
+		<!-- 手动从题库中选取  -->
+		<el-tab-pane label="手动从题库中选取"></el-tab-pane>
+		<!--  -->
+		<el-tab-pane label="新增试题">
+			<!-- <QuestionAdd /> -->
+		</el-tab-pane>
+	</el-tabs>
+	<!-- 分类对话框 -->
 </template>
 
 <script>
+import RandomTest from  './random-test'
 export default {
-	props: { courseId: Number },
+    props: { courseId: Number },
+    components: { RandomTest },
 	data() {
 		return {
 			selectedCategorys: [], // 选择的分类
@@ -218,7 +167,7 @@ export default {
 			this.$http
 				.post("/api/getRandomTest", obj)
 				.then(({ data }) => {
-					console.log("得到的随机试题", data.data);
+					// console.log("得到的随机试题", data);
 					this.currDialogConfirmBtn = false;
 					this.$emit("fixed-random-test", data.data);
 				})
@@ -244,7 +193,7 @@ export default {
 dd {
 	margin-top: 5px;
 }
-.random-test {
+.add_paper_test_dialog {
 	min-height: 400px;
 	p.label > i {
 		color: orange;
@@ -260,7 +209,7 @@ dd {
 }
 </style>
 <style>
-/* .random-test.el-tabs.el-tabs--top.el-tabs--border-card {
+/* .add_paper_test_dialog.el-tabs.el-tabs--top.el-tabs--border-card {
 	box-shadow: none;
 	border: none;
 } */
